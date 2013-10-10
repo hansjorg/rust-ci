@@ -8,15 +8,15 @@ urlpatterns = patterns('',
     # url(r'^$', 'tpt.views.home', name='home'),
     # url(r'^tpt/', include('tpt.foo.urls')),
     
-    url(r'^$', 'ppatrigger.views.index', name='index'),
-    url(r'^help/$', 'ppatrigger.views.help', name='help'),
-    url(r'^p/add/$', 'ppatrigger.views.add_project', name='add_project'),
-    url(r'^p/(?P<project_id>\d+)/$', 'ppatrigger.views.show_project', name='show_project'),
+    url(r'^rust-ci/$', 'ppatrigger.views.index', name='index'),
+    url(r'^rust-ci/help/$', 'ppatrigger.views.help', name='help'),
+    url(r'^rust-ci/p/add/$', 'ppatrigger.views.add_project', name='add_project'),
+    url(r'^rust-ci/p/(?P<project_id>\d+)/$', 'ppatrigger.views.show_project', name='show_project'),
     
-    url(r'^callback$', 'ppatrigger.views.github_callback'),
+    url(r'^rust-ci/callback$', 'ppatrigger.views.github_callback'),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^rust-ci/admin/', include(admin.site.urls)),
 )
