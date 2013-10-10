@@ -1,3 +1,5 @@
+import datetime
+import pytz
 from dateutil import parser
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Q
@@ -59,7 +61,7 @@ class Command(BaseCommand):
 
     def check_package(self, package, timestamp):
         projects = Project.objects.filter(Q(package = package),
-            Q(last_triggered__isnull = True) |
+            Q(build_requested__exact = True) |
                     Q(last_triggered__lt = timestamp))
 
         for project in projects:
@@ -87,10 +89,13 @@ class Command(BaseCommand):
             if response and 'result' in response:
                 started = response['result'] == True
 
-            if started: 
+            if started:
                 project.build_started = True
+                project.build_requested = False
                 project.build_id = last_build_id
-                project.last_triggered = timestamp
+                now = datetime.datetime.utcnow().replace(tzinfo =
+                        pytz.utc)
+                project.last_triggered = now
                 project.save()
 
                 self.stdout.write('Build successfully started: ' 

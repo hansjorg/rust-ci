@@ -19,3 +19,4 @@ wadllib==1.3.2
 wsgi-intercept==0.5.1
 wsgiref==0.1.2
 zope.interface==4.0.5
+pytz>=2013b

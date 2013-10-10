@@ -42,6 +42,7 @@ class Project(models.Model):
     last_triggered = models.DateTimeField(null=True, blank=True)
     build_id = models.CharField(null=True, max_length=100)
 
+    build_requested = models.BooleanField(default=True)
     build_started = models.BooleanField(default=False)
 
     # Retrieved from GitHub via Travis

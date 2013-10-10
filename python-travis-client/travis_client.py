@@ -35,6 +35,13 @@ def call(url, token = None, data = None):
 
     return result
 
+def get_travis_token(github_token):
+    token = None
+    response = call('/auth/github' , data = {'github_token': github_token})
+    if 'access_token' in response:
+        token = response['access_token']
+    return token
+
 def restart_build(travis_token, build_id):
     return call('/requests', travis_token, { 'build_id': build_id })
 

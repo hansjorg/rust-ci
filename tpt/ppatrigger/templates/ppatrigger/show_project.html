@@ -16,12 +16,11 @@
               <td>{{ project.created }}</td>
             </tr>
             <tr>
-              <th>last triggered</th>
-              <td>{{ project.last_triggered }}</td>
+              <th>builds</th>
+              <td>{{ builds | length }}</td>
             </tr>
             <tr>
-              <th>builds</th>
-              <td>{{ builds.size }}</td>
+              <td colspan="2"><a href="{% url 'trigger_build' project.id %}">Trigger build</a></td>
             </tr>
           </table>
       </div>
@@ -42,7 +41,9 @@
             <td>{{ build.finished_at }}</td>
             <td style="text-align: center;">{{ build.duration }}</td>
             <td>
-              {% if project.last_build.status == 0 %}
+              {% if project.build_requested or project.build_started %}
+                <img src="/static/gfx/spinner.png" alt="building"/>
+              {% elif project.last_build.status == 0 %}
                 <img src="/static/gfx/passing.png" alt="passing build"/>
               {% elif project.last_build.status > 0 %}
                 <img src="/static/gfx/failing.png" alt="failing build"/>

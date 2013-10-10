@@ -10,6 +10,7 @@ from django.conf import settings
 from tpt import private_settings
 from models import Project, Build
 from forms import ProjectForm
+from travis_client import get_travis_token
 
 def index(request, error_message = None):
     projects = Project.objects.all()
@@ -27,9 +28,23 @@ def help(request):
     }
     return render(request, 'ppatrigger/help.html', context)
 
+def show_project(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    builds = Build.objects.filter(project_id__exact = project_id)
+
+    return render(request, 'ppatrigger/show_project.html',
+            {'project': project,
+            'builds': builds,
+            'title': private_settings.APP_TITLE})
+
+
+def trigger_build(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+
+    return authenticate_with_github(request, project.id,
+            'trigger_rebuild')
 
 def add_project(request):
-
     if request.method == 'POST':
         form = ProjectForm(request.POST)
 
@@ -44,17 +59,9 @@ def add_project(request):
                     repository = repository, branch = branch)
             project.save()
 
-            state = '{:x}'.format(random.randrange(16**30))
-            request.session['state'] = state
-            request.session['project_id'] = project.id
+            return authenticate_with_github(request, project.id,
+                    'add_project')
 
-            redirect_uri = private_settings.GITHUB_REDIRECT_URI
-            return HttpResponseRedirect('https://github.com/login/'
-                    'oauth/authorize?client_id={}&scope=public_repo'
-                    '&state={}&redirect_uri={}'.format(
-                        private_settings.GITHUB_CLIENT_ID, state,
-                        urllib2.quote(redirect_uri))
-                    )
     else:
         form = ProjectForm(initial={'branch': 'master'})
 
@@ -65,14 +72,22 @@ def add_project(request):
     return render(request, 'ppatrigger/add_project.html', context)
 
 
-def show_project(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
-    builds = Build.objects.filter(project_id__exact = project_id)
+def authenticate_with_github(request, project_id, auth_reason):
+    project = Project.objects.get(pk = project_id)
 
-    return render(request, 'ppatrigger/show_project.html',
-            {'project': project,
-            'builds': builds,
-            'title': private_settings.APP_TITLE})
+    state = '{:x}'.format(random.randrange(16**30))
+    request.session['state'] = state
+    request.session['project_id'] = project.id
+    request.session['auth_reason'] = auth_reason
+
+    redirect_uri = private_settings.GITHUB_REDIRECT_URI
+    return HttpResponseRedirect('https://github.com/login/'
+            'oauth/authorize?client_id={}&scope=public_repo'
+            '&state={}&redirect_uri={}'.format(
+                private_settings.GITHUB_CLIENT_ID, state,
+                urllib2.quote(redirect_uri))
+            )
+
 
 def github_callback(request):
     state = request.session['state'] if 'state' in request.session else None
@@ -94,27 +109,53 @@ def github_callback(request):
     project = Project.objects.get(pk = project_id)
 
     if 'access_token' in response and response['access_token']:
-        data = { 'github_token': response['access_token'] }
-        req = urllib2.Request('https://api.travis-ci.org/auth/github',
-                urlencode(data))
+        github_token = response['access_token']
+
+        req = urllib2.Request('https://api.github.com/user')
         req.add_header('Accept', 'application/json')
-        travis_response = json.loads(urllib2.urlopen(req).read())
+        req.add_header('Authorization', 'token {}'.
+                format(github_token))
+        github_user = json.loads(urllib2.urlopen(req).read())
 
-        if 'access_token' in travis_response and \
-                travis_response['access_token']:
-            project.auth_token = travis_response['access_token']
-            project.save()
-
+        auth_reason = request.session['auth_reason']
+        
+        # Check that we got token for the right user
+        if project.username != github_user['login']:
+            if auth_reason == 'add_project':
+                project.delete()
+            return HttpResponse('Wrong user', status=401)
+        
+        if auth_reason == 'delete_project':
             if not settings.DEBUG:
                 mail_message = "{}/{} - {}\n\n".\
                         format(project.username, project.repository,
                                 project.branch)
-                mail_admins('Project added', mail_message)
-
+                mail_admins('Project deleted', mail_message)
+            
+            project.delete()
             return HttpResponseRedirect(reverse('ppatrigger.views.index'))
 
         else:
-            error_message = 'Error in response from Travis'
+            travis_token = get_travis_token(github_token)
+
+            if travis_token:
+                if auth_reason == 'add_project':
+                    project.auth_token = travis_token
+                    project.save()
+                    
+                    if not settings.DEBUG:
+                        mail_message = "{}/{} - {}\n\n".\
+                                format(project.username, project.repository,
+                                        project.branch)
+                        mail_admins('Project added', mail_message)
+
+                elif auth_reason == 'trigger_rebuild':
+                    project.build_requested = True 
+                    project.save()
+            
+                return HttpResponseRedirect(reverse('ppatrigger.views.index'))
+            else:
+                error_message = 'Error in response from Travis'
 
     else:
         error_message = 'Error in response from GitHub: {}'.\

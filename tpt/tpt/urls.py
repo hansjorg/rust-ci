@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     url(r'^rust-ci/$', 'ppatrigger.views.index', name='index'),
     url(r'^rust-ci/help/$', 'ppatrigger.views.help', name='help'),
     url(r'^rust-ci/p/add/$', 'ppatrigger.views.add_project', name='add_project'),
+    url(r'^rust-ci/p/(?P<project_id>\d+)/trigger/$', 'ppatrigger.views.trigger_build', name='trigger_build'),
     url(r'^rust-ci/p/(?P<project_id>\d+)/$', 'ppatrigger.views.show_project', name='show_project'),
     
     url(r'^rust-ci/callback$', 'ppatrigger.views.github_callback'),
