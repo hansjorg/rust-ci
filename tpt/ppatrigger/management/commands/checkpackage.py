@@ -27,7 +27,7 @@ class Command(BaseCommand):
                 self.stdout.write('Checking status of "%s"' % package)
             except IndexError:
                 raise CommandError('Package id "%s" not on format '
-                    'name.ubuntuseries.arch')
+                    'name.ubuntuseries.arch' % packageid)
             except Package.DoesNotExist:
                 raise CommandError('Package with id "%s" does not '
                     'exist' % packageid)
