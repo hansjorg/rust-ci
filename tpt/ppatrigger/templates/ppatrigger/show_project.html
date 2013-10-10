@@ -43,11 +43,11 @@
             <td style="text-align: center;">{{ build.duration }}</td>
             <td>
               {% if project.last_build.status == 0 %}
-                <img src="/rust-ci/static/gfx/passing.png" alt="passing build"/>
+                <img src="/static/gfx/passing.png" alt="passing build"/>
               {% elif project.last_build.status > 0 %}
-                <img src="/rust-ci/static/gfx/failing.png" alt="failing build"/>
+                <img src="/static/gfx/failing.png" alt="failing build"/>
               {% else %}
-                <img src="/rust-ci/static/gfx/unknown.png" alt="unknown build"/>
+                <img src="/static/gfx/unknown.png" alt="unknown build"/>
               {% endif %}
             </td>
             <td>

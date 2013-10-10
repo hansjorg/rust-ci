@@ -1,9 +1,10 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/rust-ci/static/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/rust-ci/static/css/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/static/css/bootstrap-theme.min.css" />
     <title>{% block title %}{% endblock %}</title>
 </head>
 
@@ -30,7 +31,7 @@
       {% block content %}{% endblock %}
     </div>
 
-    <script src="/rust-ci/static/js/jquery-2.0.3.min.js"></script>
-    <script src="/rust-ci/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/jquery-2.0.3.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
 </body>
 </html>
