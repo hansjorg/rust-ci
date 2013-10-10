@@ -1,0 +1,5 @@
+export VIRTUALENV_DISTRIBUTE=true # virtualenv is now using distribute not setuptools
+virtualenv --no-site-packages --verbose -p /opt/python2.7.5/bin/python env
+source env/bin/activate
+pip install -r requirements.txt
+
