@@ -30,11 +30,11 @@
             <td>{{ project.last_build.package_version }}</td>
             <td>
               {% if project.last_build.status == 0 %}
-                <img src="/static/gfx/passing.png" alt="passing build"/>
+                <img src="/rust-ci/static/gfx/passing.png" alt="passing build"/>
               {% elif project.last_build.status > 0 %}
-                <img src="/static/gfx/failing.png" alt="failing build"/>
+                <img src="/rust-ci/static/gfx/failing.png" alt="failing build"/>
               {% else %}
-                <img src="/static/gfx/unknown.png" alt="unknown build"/>
+                <img src="/rust-ci/static/gfx/unknown.png" alt="unknown build"/>
               {% endif %}
             </td>
             <td>
