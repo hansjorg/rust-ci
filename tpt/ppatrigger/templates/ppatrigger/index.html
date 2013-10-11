@@ -12,51 +12,53 @@
         </div>
       {% endif %}
 
-      <table class="table table-striped">
-        <tr>
-          <th>Project</th>
-          <th>Branch</th>
-          <th class="hidden-xs">Commit</th>
-          <th class="hidden-xs">Built with</th>
-          <th>Status</th>
-          <th class="hidden-xs"></th>
-          <th></th>
-        </tr>
-        {% for project in projects %}
+      <div class="table-responsive">
+        <table class="table table-striped">
           <tr>
-            <td>{{ project.username }}/{{ project.repository }}</td>
-            <td>{{ project.branch }}</td>
-            <td class="hidden-xs">{{ project.last_build.commit }}</td>
-            <td class="hidden-xs">{{ project.last_build.package_version }}</td>
-            <td>
-              {% if not project.last_triggered %}
-                Never built
-              {% elif project.build_requested or project.build_started %}
-                <span class="spinner"></spinner>
-              {% elif project.last_build.status == 0 %}
-                <a href="https://travis-ci.org/{{ project.username }}/{{project.repository}}/builds/{{ project.last_build.build_id }}">
-                  <img src="/static/gfx/passing.png" alt="passing build"/>
-                </a>
-              {% elif project.last_build.status > 0 %}
-                <a href="https://travis-ci.org/{{ project.username }}/{{project.repository}}/builds/{{ project.last_build.build_id }}">
-                  <img src="/static/gfx/failing.png" alt="failing build"/>
-                </a>
-              {% else %}
-                <img src="/static/gfx/unknown.png" alt="unknown build"/>
-              {% endif %}
-            </td>
-            <td class="hidden-xs">
-              {% if project.last_build %}
-                <a href="https://travis-ci.org/{{ project.username }}/{{project.repository}}/builds/{{ project.last_build.build_id }}">build log</a>
-              {% endif %}
-            </td>
-            <td>
-              {% if project.last_build %}
-                <a href="{% url 'show_project' project.id %}">details</a></td>
-              {% endif %}
+            <th>Project</th>
+            <th>Branch</th>
+            <th class="hidden-xs">Commit</th>
+            <th class="hidden-xs">Built with</th>
+            <th>Status</th>
+            <th class="hidden-xs"></th>
+            <th></th>
           </tr>
-        {% endfor %}
-      </table>
+          {% for project in projects %}
+            <tr>
+              <td>{{ project.username }}/{{ project.repository }}</td>
+              <td>{{ project.branch }}</td>
+              <td class="hidden-xs">{{ project.last_build.commit }}</td>
+              <td class="hidden-xs">{{ project.last_build.package_version }}</td>
+              <td>
+                {% if not project.last_triggered %}
+                  Never built
+                {% elif project.build_requested or project.build_started %}
+                  <span class="spinner"></spinner>
+                {% elif project.last_build.status == 0 %}
+                  <a href="https://travis-ci.org/{{ project.username }}/{{project.repository}}/builds/{{ project.last_build.build_id }}">
+                    <img src="/static/gfx/passing.png" alt="passing build"/>
+                  </a>
+                {% elif project.last_build.status > 0 %}
+                  <a href="https://travis-ci.org/{{ project.username }}/{{project.repository}}/builds/{{ project.last_build.build_id }}">
+                    <img src="/static/gfx/failing.png" alt="failing build"/>
+                  </a>
+                {% else %}
+                  <img src="/static/gfx/unknown.png" alt="unknown build"/>
+                {% endif %}
+              </td>
+              <td class="hidden-xs">
+                {% if project.last_build %}
+                  <a href="https://travis-ci.org/{{ project.username }}/{{project.repository}}/builds/{{ project.last_build.build_id }}">build log</a>
+                {% endif %}
+              </td>
+              <td>
+                {% if project.last_build %}
+                  <a href="{% url 'show_project' project.id %}">details</a></td>
+                {% endif %}
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
     </div>
   </div>
 {% endblock %}
