@@ -7,6 +7,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
+SITE_ROOT = os.path.join(PROJECT_PATH, '/../../')
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -25,6 +26,9 @@ DATABASES = {
         'PORT': '',                      # Set to empty string for default.
     }
 }
+
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 25
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -68,7 +72,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = PROJECT_PATH + '/../../static-collected/static/'
+STATIC_ROOT = os.path.join(SITE_ROOT, '/static-collected/static/')
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -158,13 +162,26 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'logfile': {
+            'level':'DEBUG',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': SITE_ROOT + "/logs/logfile",
+            'maxBytes': 500000,
+            'backupCount': 2,
+            'formatter': 'standard',
+        },
     },
     'loggers': {
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
             'propagate': True,
+        },
+        'django': {
+            'handlers': ['logfile'],
+            'propagate': True,
+            'level':'WARN',
         },
     }
 }

@@ -41,9 +41,9 @@
             <td>{{ build.finished_at }}</td>
             <td style="text-align: center;">{{ build.duration }}</td>
             <td>
-              {% if project.last_build.status == 0 %}
+              {% if build.status == 0 %}
                 <img src="/static/gfx/passing.png" alt="passing build"/>
-              {% elif project.last_build.status > 0 %}
+              {% elif build.status > 0 %}
                 <img src="/static/gfx/failing.png" alt="failing build"/>
               {% else %}
                 <img src="/static/gfx/unknown.png" alt="unknown build"/>
