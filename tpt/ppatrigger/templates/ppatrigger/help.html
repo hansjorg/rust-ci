@@ -1,19 +1,45 @@
 {% extends "ppatrigger/base.html" %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}Help - {{ title }}{% endblock %}
 
 {% block content %}
-  <!-- Main component for a primary marketing message or call to action -->
   <div class="panel panel-default">
     <div class="panel-body">
 
-      <div class="panel panel-primary">
-        <div class="panel-heading">Add new project</div>
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          Add a .travis.yml file to your project.
+        </div>
         <div class="panel-body">
-          Add some help text here.
+<pre>
+before_install:
+  - yes | sudo add-apt-repository ppa:hansjorg/rust
+  - sudo apt-get update
+install:
+  - sudo apt-get install rust-nightly
+script:
+  - ./build.sh
+</pre>
         </div>
       </div>
-    
+
+      <div class="panel panel-info">
+        <div class="panel-heading">Enable Travis CI for project</div>
+        <div class="panel-body">
+          Enable project on your <a href="https://travis-ci.org/profile">Travis CI profile</a>.
+        </div>
+      </div>
+
+      <div class="alert alert-warning">
+        You must trigger at least one Travis CI build before proceeding.
+      </div>
+
+      <div class="panel panel-info">
+        <div class="panel-heading">Add project</div>
+        <div class="panel-body">
+          Then <a href="{% url 'add_project' %}">add project</a> here.
+        </div>
+      </div>
     </div>
   </div>
 {% endblock %}

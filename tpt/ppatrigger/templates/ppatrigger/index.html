@@ -30,7 +30,7 @@
             <td>{{ project.last_build.package_version }}</td>
             <td>
               {% if not project.last_triggered %}
-                Awaiting first build
+                Never built
               {% elif project.build_requested or project.build_started %}
                 <span class="spinner"></spinner>
               {% elif project.last_build.status == 0 %}
