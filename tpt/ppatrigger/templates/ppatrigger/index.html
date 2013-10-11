@@ -3,6 +3,20 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      What is this?
+    </div>
+    <div class="panel-body">
+      <p>
+        This webapp allows you to add your <a href="https://travis-ci.com/">Travis CI</a> enabled, GitHub hosted <a href="http://www.rust-lang.org/">Rust</a> project and have it built each time there's a new version of the <a href="https://launchpad.net/~hansjorg/+archive/rust">rust-nightly</a> Ubuntu package.
+      </p>
+      <p>
+        <a href="{% url 'help' %}">How to add your own project</a>
+      </p>
+    </div>
+  </div>
+
   <div class="panel panel-default">
     <div class="panel-body">
 

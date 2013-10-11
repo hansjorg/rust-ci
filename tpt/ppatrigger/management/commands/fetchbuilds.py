@@ -1,8 +1,10 @@
 from dateutil import parser
 from django.core.management.base import BaseCommand
+from django.db import IntegrityError
 from ppatrigger.models import Project
 from ppatrigger.models import Build
 from travis_client import get_build_by_id
+import json
 
 class Command(BaseCommand):
     args = ''
@@ -53,13 +55,18 @@ class Command(BaseCommand):
                                 message = build['message'],
                                 compare_url = build['compare_url']
                         )
-                        build_data.save()
+                        try:
+                            build_data.save()
 
-                        project.last_build = build_data
-                        project.build_started = False
-                        project.author_name = build['author_name']
-                        project.author_email = build['author_email']
-                        project.save()
+                            project.last_build = build_data
+                            project.build_started = False
+                            project.author_name = build['author_name']
+                            project.author_email = build['author_email']
+                            project.save()
+                        except IntegrityError:
+                            # TODO: temp fix for missing result from Travis
+                            self.stdout.write(str(project) + ': Error storing build state for project')
+                            self.stdout.write(json.dumps(build, sort_keys=True, indent=4))
 
                     else:
                         self.stdout.write(str(project) + ': Build not '
