@@ -29,7 +29,9 @@
             <td>{{ project.last_build.commit }}</td>
             <td>{{ project.last_build.package_version }}</td>
             <td>
-              {% if project.build_requested or project.build_started %}
+              {% if not project.last_triggered %}
+                Awaiting first build
+              {% elif project.build_requested or project.build_started %}
                 <img src="/static/gfx/spinner.png" alt="building"/>
               {% elif project.last_build.status == 0 %}
                 <img src="/static/gfx/passing.png" alt="passing build"/>
@@ -46,7 +48,7 @@
             </td>
             <td>
               {% if project.last_build %}
-                <a href="{% url 'show_project' project.id %}">history</a></td>
+                <a href="{% url 'show_project' project.id %}">details</a></td>
               {% endif %}
           </tr>
         {% endfor %}

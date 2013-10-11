@@ -91,6 +91,6 @@ class Build(models.Model):
     compare_url = models.CharField(max_length=150)  # link to diff
 
     class Meta:
-        ordering = ['started_at']
+        ordering = ['-started_at']
 
 
