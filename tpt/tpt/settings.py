@@ -29,6 +29,7 @@ DATABASES = {
 
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 25
+SERVER_EMAIL = 'root@hiho.io'
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
