@@ -32,7 +32,7 @@
               {% if not project.last_triggered %}
                 Awaiting first build
               {% elif project.build_requested or project.build_started %}
-                <img src="/static/gfx/spinner.png" alt="building"/>
+                <span class="spinner"></spinner>
               {% elif project.last_build.status == 0 %}
                 <img src="/static/gfx/passing.png" alt="passing build"/>
               {% elif project.last_build.status > 0 %}
