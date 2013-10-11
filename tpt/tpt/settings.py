@@ -3,15 +3,15 @@ import private_settings
 
 # Django settings for tpt project.
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
-SITE_ROOT = os.path.join(PROJECT_PATH, '/../../')
+SITE_ROOT = os.path.join(PROJECT_PATH, '../../')
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
-    private_settings.ADMIN
+    private_settings.ADMIN,
 )
 
 MANAGERS = ADMINS
@@ -32,7 +32,7 @@ EMAIL_PORT = 25
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.hiho.io']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -72,7 +72,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = os.path.join(SITE_ROOT, '/static-collected/static/')
+STATIC_ROOT = os.path.join(SITE_ROOT, 'static-collected/static/')
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
