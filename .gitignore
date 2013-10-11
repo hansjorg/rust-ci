@@ -1,3 +1,4 @@
 private_settings.py
 *.pyc
 env
+logs/logfile
