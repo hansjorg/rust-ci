@@ -1,4 +1,5 @@
 from dateutil import parser
+from django.db import connection
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError
 from ppatrigger.models import Project
@@ -65,6 +66,7 @@ class Command(BaseCommand):
                             project.save()
                         except IntegrityError:
                             # TODO: temp fix for missing result from Travis
+                            connection._rollback()
                             self.stdout.write(str(project) + ': Error storing build state for project')
                             self.stdout.write(json.dumps(build, sort_keys=True, indent=4))
 
