@@ -42,11 +42,11 @@ class Command(BaseCommand):
                         # Result and status for some builds have been returned
                         # as null from Travis for some reason
                         result = -1
-                        if build['result']:
+                        if build['result'] != None:
                             result = build['result']
 
                         status = -1
-                        if build['status']:
+                        if build['status'] != None:
                             status = build['status']
 
                         build_data = Build(
