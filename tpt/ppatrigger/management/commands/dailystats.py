@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
             try:
                 latest_daily = DailyStats.objects.filter(
-                        package__exact = package).latest('created_at')
+                        package__exact = package).first('created_at')
 
                 latest = latest_daily.created_at
             except DailyStats.DoesNotExist:
