@@ -15,7 +15,7 @@ class Command(BaseCommand):
             raise CommandError('Provide at least one numeric project id')
 
         for project_id in args:
-            project = Projects.objects.get(pk = project_id)
+            project = Project.objects.get(pk = project_id)
 
             build = get_build_by_id(project.build_id)
 
