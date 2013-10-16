@@ -39,7 +39,7 @@
           </tr>
           {% for project in projects %}
             <tr>
-              <td>{{ project.username }}/{{ project.repository }}</td>
+              <td><a href="https://github.com/{{ project.username }}/{{ project.repostiory}}">{{ project.username }}/{{ project.repository }}</a></td>
               <td>{{ project.branch }}</td>
               <td class="hidden-xs">{{ project.last_build.commit }}</td>
               <td class="hidden-xs">{{ project.last_build.package_version }}</td>
