@@ -1,3 +1,4 @@
+import traceback
 from dateutil import parser
 from django.db import connection
 from django.core.management.base import BaseCommand
@@ -38,11 +39,15 @@ class Command(BaseCommand):
                         self.stdout.write(str(project) + ': Build '
                                 'finished, saving data ')
 
-                        # Result for some builds have been returned
+                        # Result and status for some builds have been returned
                         # as null from Travis for some reason
                         result = -1
                         if build['result']:
                             result = build['result']
+
+                        status = -1
+                        if build['status']:
+                            status = build['status']
 
                         build_data = Build(
                                 project = project,
@@ -50,7 +55,7 @@ class Command(BaseCommand):
                                 package_version = project.package.version,
                                 package_created_at = project.package.created_at,
                                 result = result,
-                                status = build['status'],
+                                status = status,
                                 duration = build['duration'],
                                 started_at = parser.parse(build['started_at']),
                                 finished_at = parser.parse(build['finished_at']),
@@ -75,6 +80,8 @@ class Command(BaseCommand):
                             connection._rollback()
                             self.stdout.write(str(project) + ': Error storing build state for project')
                             self.stdout.write(json.dumps(build, sort_keys=True, indent=4))
+
+                            self.stdout.write(traceback.format_exc())
 
                     else:
                         self.stdout.write(str(project) + ': Build not '
