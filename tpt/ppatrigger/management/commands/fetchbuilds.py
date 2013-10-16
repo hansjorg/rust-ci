@@ -38,12 +38,18 @@ class Command(BaseCommand):
                         self.stdout.write(str(project) + ': Build '
                                 'finished, saving data ')
 
+                        # Result for some builds have been returned
+                        # as null from Travis for some reason
+                        result = -1
+                        if build['result']:
+                            result = build['result']
+
                         build_data = Build(
                                 project = project,
                                 build_id = build['id'],
                                 package_version = project.package.version,
                                 package_created_at = project.package.created_at,
-                                result = build['result'],
+                                result = result,
                                 status = build['status'],
                                 duration = build['duration'],
                                 started_at = parser.parse(build['started_at']),
