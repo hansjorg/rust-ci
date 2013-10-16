@@ -16,14 +16,21 @@ class Command(BaseCommand):
 
         for package in packages:
 
+            latest = None
             try:
-                latest_daily = DailyStats.objects.filter(
-                        package__exact = package).earliest('created_at')
+                latest_dailies = DailyStats.objects.filter(
+                        package__exact = package).order_by('created_at')
 
-                latest = latest_daily.created_at
+                if len(latest_dailies):
+                    latest_daily = latest_dailies[0]
+                    latest = latest_daily.created_at
             except DailyStats.DoesNotExist:
+                pass
+
+            if not latest:
                 # First time running, use package creation
-                latest = package.created_at
+                latest = package.first_created_at
+                self.stdout.write('using package first_created_at: ' + str(latest))
 
             now = datetime.utcnow().replace(tzinfo = pytz.utc)
             day = latest

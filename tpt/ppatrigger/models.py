@@ -19,6 +19,7 @@ class Package(models.Model):
     # Latest version string and creation timestamp
     version = models.CharField(null=True, max_length=100, blank=True)
     created_at = models.DateTimeField(null=True, blank=True)
+    first_created_at = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
         return u'%s %s %s' % (self.name, self.series, self.arch)
@@ -99,9 +100,9 @@ class Build(models.Model):
         return self.status > 0
 
     def __unicode__(self):
-        if self.is_success:
+        if self.is_success():
             status_text = 'success'
-        elif self.is_failure:
+        elif self.is_failure():
             status_text = 'failure'
         else:
             status_text = 'error'
