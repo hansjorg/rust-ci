@@ -68,6 +68,8 @@ class Build(models.Model):
     fetched_at = models.DateTimeField(auto_now_add=True)
     
     result = models.IntegerField()
+    # Build status (0 = ok, > 1 = fail,
+    # < 0 = error fetching status from Travis)
     status = models.IntegerField()
 
     duration = models.IntegerField()
@@ -90,7 +92,31 @@ class Build(models.Model):
     message = models.TextField()                    # commit message
     compare_url = models.CharField(max_length=150)  # link to diff
 
+    def is_success(self):
+        return self.status == 0
+
+    def is_failure(self):
+        return self.status > 0
+
+    def __unicode__(self):
+        if self.is_success:
+            status_text = 'success'
+        elif self.is_failure:
+            status_text = 'failure'
+        else:
+            status_text = 'error'
+        return u'{} {}'.format(str(self.project), status_text)
+
+
     class Meta:
         ordering = ['-started_at', '-fetched_at']
 
+class DailyStats(models.Model):
+
+    package = models.ForeignKey(Package)
+    created_at = models.DateTimeField()
+    successful = models.PositiveSmallIntegerField()
+    failed = models.PositiveSmallIntegerField()
+    errors = models.PositiveSmallIntegerField()
+    diff_url = models.CharField(max_length=150)
 
