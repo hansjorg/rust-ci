@@ -31,38 +31,40 @@
   <div class="panel panel-default">
     <div class="panel-body">
 
-      <table class="table table-striped">
-        <tr>
-          <th>Built with</th>
-          <th>Commit</th>
-          <th>Started</th>
-          <th>Finished</th>
-          <th style="text-align: center;">Duration</th>
-          <th>Result</th>
-        </tr>
-        {% for build in builds %}
+      <div class="table-responsive">
+        <table class="table table-striped">
           <tr>
-            <td>{{ build.package_version }}</td>
-            <td class="hidden-xs">
-              <a title="{{ build.message }}" href="https://github.com/{{ project.username }}/{{ project.repository }}/commit/{{ build.commit}}">{{ build.message | truncatechars:40 }}</a>
-            </td>
-            <td>{{ build.started_at }}</td>
-            <td>{{ build.finished_at }}</td>
-            <td style="text-align: center;">{{ build.duration }}</td>
-            <td>
-              {% if not project.last_triggered %}
-                <img src="/static/gfx/unknown.png" alt="unknown build"/>
-              {% elif build.status == 0 %}
-                <img src="/static/gfx/passing.png" alt="passing build"/>
-              {% elif build.status > 0 %}
-                <img src="/static/gfx/failing.png" alt="failing build"/>
-              {% else %}
-                <img src="/static/gfx/error.png" alt="errored"/>
-              {% endif %}
-            </td>
+            <th>Built with</th>
+            <th>Commit</th>
+            <th>Started</th>
+            <th>Finished</th>
+            <th style="text-align: center;">Duration</th>
+            <th>Result</th>
           </tr>
-        {% endfor %}
-      </table>
+          {% for build in builds %}
+            <tr>
+              <td>{{ build.package_version }}</td>
+              <td>
+                <a title="{{ build.message }}" href="https://github.com/{{ project.username }}/{{ project.repository }}/commit/{{ build.commit}}">{{ build.message | truncatechars:40 }}</a>
+              </td>
+              <td>{{ build.started_at }}</td>
+              <td>{{ build.finished_at }}</td>
+              <td style="text-align: center;">{{ build.duration }}</td>
+              <td>
+                {% if not project.last_triggered %}
+                  <img src="/static/gfx/unknown.png" alt="unknown build"/>
+                {% elif build.status == 0 %}
+                  <img src="/static/gfx/passing.png" alt="passing build"/>
+                {% elif build.status > 0 %}
+                  <img src="/static/gfx/failing.png" alt="failing build"/>
+                {% else %}
+                  <img src="/static/gfx/error.png" alt="errored"/>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
     </div>
   </div>
 {% endblock %}
