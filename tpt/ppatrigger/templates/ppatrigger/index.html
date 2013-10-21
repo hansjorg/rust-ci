@@ -3,6 +3,12 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
+  {% if error_message %}
+    <div class="alert alert-danger">
+      <strong>Project not added</strong> {{ error_message }}
+    </div>
+  {% endif %}
+
   <div class="panel panel-info">
     <div class="panel-heading">
       What is this?
@@ -14,14 +20,6 @@
       <p>
         <a href="{% url 'help' %}">How to add your own project</a>
       </p>
-    </div>
-  </div>
-
-  <div class="panel panel-info">
-    <div class="panel-body">
-      There are {{ today.project_count }} registered projects with
-      <strong>{{ today.successful }} (<span style="color: {% if successful_diff > -1 %}#48cf14{% else %}#d65941{% endif %}">{{ successful_diff }}</span>)</strong> successful and
-      <strong>{{ today.failed }} (<span style="color: {% if failed_diff < 0 %}#d65941{% else %}#48cf14{% endif %}">{{ failed_diff }}</span>)</strong> failed builds today.
     </div>
   </div>
 
@@ -56,55 +54,52 @@
 
   <div class="panel panel-default">
     <div class="panel-body">
+      There are {{ today.project_count }} registered projects with
+      <strong>{{ today.successful }} (<span style="color: {% if successful_diff > -1 %}#48cf14{% else %}#d65941{% endif %}">{{ successful_diff }}</span>)</strong> successful and
+      <strong>{{ today.failed }} (<span style="color: {% if failed_diff < 0 %}#d65941{% else %}#48cf14{% endif %}">{{ failed_diff }}</span>)</strong> failed builds today.
+    </div>
 
-      {% if error_message %}
-        <div class="alert alert-danger">
-          <strong>Project not added</strong> {{ error_message }}
-        </div>
-      {% endif %}
-
-      <div class="table-responsive">
-        <table class="table table-striped">
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <tr>
+          <th>Project</th>
+          <th class="hidden-xs">Branch</th>
+          <th class="hidden-xs">Commit</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+        {% for project in projects %}
           <tr>
-            <th>Project</th>
-            <th class="hidden-xs">Branch</th>
-            <th class="hidden-xs">Commit</th>
-            <th>Status</th>
-            <th></th>
+            <td><a href="https://github.com/{{ project.username }}/{{ project.repository }}">{{ project.username }}/{{ project.repository }}</a></td>
+            <td class="hidden-xs">{{ project.branch }}</td>
+            <td class="hidden-xs">
+              <a title="{{ project.last_build.message }}" href="https://github.com/{{ project.username }}/{{ project.repository }}/commit/{{ project.last_build.commit}}">{{ project.last_build.message | truncatechars:90 }}</a>
+            </td>
+            <td>
+              {% if not project.last_triggered %}
+                <img src="/static/gfx/unknown.png" alt="unknown build"/>
+              {% elif project.build_requested or project.build_started %}
+                <span class="spinner"></spinner>
+              {% elif project.last_build.status == 0 %}
+                <a href="https://travis-ci.org/{{ project.username }}/{{project.repository}}/builds/{{ project.last_build.build_id }}">
+                  <img src="/static/gfx/passing.png" alt="passing build"/>
+                </a>
+              {% elif project.last_build.status > 0 %}
+                <a href="https://travis-ci.org/{{ project.username }}/{{project.repository}}/builds/{{ project.last_build.build_id }}">
+                  <img src="/static/gfx/failing.png" alt="failing build"/>
+                </a>
+              {% else %}
+                <a href="https://travis-ci.org/{{ project.username }}/{{project.repository}}/builds/{{ project.last_build.build_id }}">
+                  <img src="/static/gfx/error.png" alt="errored"/>
+                </a>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{% url 'show_project' project.id %}">details</a>
+            </td>
           </tr>
-          {% for project in projects %}
-            <tr>
-              <td><a href="https://github.com/{{ project.username }}/{{ project.repository }}">{{ project.username }}/{{ project.repository }}</a></td>
-              <td class="hidden-xs">{{ project.branch }}</td>
-              <td class="hidden-xs">
-                <a title="{{ project.last_build.message }}" href="https://github.com/{{ project.username }}/{{ project.repository }}/commit/{{ project.last_build.commit}}">{{ project.last_build.message | truncatechars:90 }}</a>
-              </td>
-              <td>
-                {% if not project.last_triggered %}
-                  <img src="/static/gfx/unknown.png" alt="unknown build"/>
-                {% elif project.build_requested or project.build_started %}
-                  <span class="spinner"></spinner>
-                {% elif project.last_build.status == 0 %}
-                  <a href="https://travis-ci.org/{{ project.username }}/{{project.repository}}/builds/{{ project.last_build.build_id }}">
-                    <img src="/static/gfx/passing.png" alt="passing build"/>
-                  </a>
-                {% elif project.last_build.status > 0 %}
-                  <a href="https://travis-ci.org/{{ project.username }}/{{project.repository}}/builds/{{ project.last_build.build_id }}">
-                    <img src="/static/gfx/failing.png" alt="failing build"/>
-                  </a>
-                {% else %}
-                  <a href="https://travis-ci.org/{{ project.username }}/{{project.repository}}/builds/{{ project.last_build.build_id }}">
-                    <img src="/static/gfx/error.png" alt="errored"/>
-                  </a>
-                {% endif %}
-              </td>
-              <td>
-                <a href="{% url 'show_project' project.id %}">details</a>
-              </td>
-            </tr>
-          {% endfor %}
-        </table>
-      </div>
+        {% endfor %}
+      </table>
     </div>
   </div>
 {% endblock %}
