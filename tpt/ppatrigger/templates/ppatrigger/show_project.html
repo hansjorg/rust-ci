@@ -9,6 +9,12 @@
     </div>
       <table class="table">
         <tr>
+          <th>branch</th>
+          <td>
+            <a href="https://github.com/{{ project.username }}/{{ project.repository }}/tree/{{ project.branch }}">{{ project.branch }}</a>
+          </td>
+        </tr>
+        <tr>
           <th>created</th>
           <td>{{ project.created }}</td>
         </tr>
@@ -23,7 +29,15 @@
           </td>
         </tr>
         <tr>
-          <td colspan="2"><a data-toggle="tooltip" title="Only for owner" href="{% url 'trigger_build' project.id %}">Trigger build</a></td>
+          <th>live status</th>
+          <td>
+            <a href="https://travis-ci.org/{{ project.username }}/{{ project.repository }}">
+              <img src="https://travis-ci.org/{{ project.username }}/{{ project.repository }}.png"/>
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2"><a data-toggle="tooltip" title="For owner" href="{% url 'trigger_build' project.id %}">Trigger build</a></td>
         </tr>
       </table>
   </div>
