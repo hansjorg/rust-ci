@@ -76,7 +76,9 @@
             <tr>
               <td><a href="https://github.com/{{ project.username }}/{{ project.repository }}">{{ project.username }}/{{ project.repository }}</a></td>
               <td>{{ project.branch }}</td>
-              <td class="hidden-xs">{{ project.last_build.commit }}</td>
+              <td class="hidden-xs">
+                <a title="{{ project.last_build.message }}" href="https://github.com/{{ project.username }}/{{ project.repository }}/commit/{{ project.last_build.commit}}">{{ project.last_build.message | truncatechars:90 }}</a>
+              </td>
               <td>
                 {% if not project.last_triggered %}
                   <img src="/static/gfx/unknown.png" alt="unknown build"/>

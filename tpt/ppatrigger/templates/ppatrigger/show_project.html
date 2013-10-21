@@ -23,7 +23,7 @@
           </td>
         </tr>
         <tr>
-          <td colspan="2"><a href="{% url 'trigger_build' project.id %}">Trigger build</a> (only for owner)</td>
+          <td colspan="2"><a data-toggle="tooltip" title="Only for owner" href="{% url 'trigger_build' project.id %}">Trigger build</a></td>
         </tr>
       </table>
   </div>
@@ -34,6 +34,7 @@
       <table class="table table-striped">
         <tr>
           <th>Built with</th>
+          <th>Commit</th>
           <th>Started</th>
           <th>Finished</th>
           <th style="text-align: center;">Duration</th>
@@ -42,6 +43,9 @@
         {% for build in builds %}
           <tr>
             <td>{{ build.package_version }}</td>
+            <td class="hidden-xs">
+              <a title="{{ build.message }}" href="https://github.com/{{ project.username }}/{{ project.repository }}/commit/{{ build.commit}}">{{ build.message | truncatechars:40 }}</a>
+            </td>
             <td>{{ build.started_at }}</td>
             <td>{{ build.finished_at }}</td>
             <td style="text-align: center;">{{ build.duration }}</td>
