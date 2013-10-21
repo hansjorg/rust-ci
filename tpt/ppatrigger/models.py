@@ -115,9 +115,13 @@ class Build(models.Model):
 class DailyStats(models.Model):
 
     package = models.ForeignKey(Package)
+    date = models.DateField()
     created_at = models.DateTimeField()
     successful = models.PositiveSmallIntegerField()
+    project_count = models.PositiveSmallIntegerField()
     failed = models.PositiveSmallIntegerField()
     errors = models.PositiveSmallIntegerField()
     diff_url = models.CharField(max_length=150)
 
+    class Meta:
+        ordering = ['date']

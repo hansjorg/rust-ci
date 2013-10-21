@@ -8,16 +8,38 @@ from django.shortcuts import render, get_object_or_404
 from django.core.mail import mail_admins
 from django.conf import settings
 from tpt import private_settings
-from models import Project, Build
+from models import Project, Build, DailyStats
 from forms import ProjectForm
 from travis_client import get_travis_token
 
 def index(request, error_message = None):
     projects = Project.objects.all()
+    dailystats = DailyStats.objects.all()
+
+    today = None
+    yesterday = None
+    successful_diff = None
+    failed_diff = None
+    try:
+        today = dailystats[len(dailystats) - 1]
+        yesterday = dailystats[len(dailystats) - 2]
+
+        successful_diff = today.successful - yesterday.successful
+        if successful_diff > 1:
+            successful_diff = '+' + str(successful_diff)
+        failed_diff = today.failed - yesterday.failed
+        if failed_diff > 1:
+            failed_diff = '+' + str(failed_diff)
+    except:
+        pass
 
     context = {
             'title': private_settings.APP_TITLE,
             'projects': projects,
+            'dailystats': dailystats,
+            'today': today,
+            'successful_diff': successful_diff,
+            'failed_diff': failed_diff, 
             'error_message': error_message,
     }
     return render(request, 'ppatrigger/index.html', context)

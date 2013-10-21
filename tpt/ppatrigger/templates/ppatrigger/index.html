@@ -9,13 +9,50 @@
     </div>
     <div class="panel-body">
       <p>
-        This webapp allows you to add your <a href="https://travis-ci.com/">Travis CI</a> enabled, GitHub hosted <a href="http://www.rust-lang.org/">Rust</a> project and have it built each time there's a new version of the <a href="https://launchpad.net/~hansjorg/+archive/rust">rust-nightly</a> Ubuntu package.
+        This dashboard allows you to add your <a href="https://travis-ci.com/">Travis CI</a> enabled, GitHub hosted <a href="http://www.rust-lang.org/">Rust</a> project and have it built each time there's a new version of the <a href="https://launchpad.net/~hansjorg/+archive/rust">rust-nightly</a> Ubuntu package.
       </p>
       <p>
         <a href="{% url 'help' %}">How to add your own project</a>
       </p>
     </div>
   </div>
+
+  <div class="panel panel-info">
+    <div class="panel-body">
+      There are {{ today.project_count }} registered projects with
+      <strong>{{ today.successful }} (<span style="color: {% if successful_diff > -1 %}#48cf14{% else %}#d65941{% endif %}">{{ successful_diff }}</span>)</strong> successful and
+      <strong>{{ today.failed }} (<span style="color: {% if failed_diff > -1 %}#d65941{% else %}#48cf14{% endif %}">{{ failed_diff }}</span>)</strong> failed builds today.
+    </div>
+  </div>
+
+  {% comment %}
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+          Daily stats
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in">
+      <div class="panel-body">
+        <div id="daily-graph" style="width: 100%; height: 200px"></div>
+        <script src="/static/js/dygraph-combined.js"></script>
+        <script type="text/javascript">
+          new Dygraph(document.getElementById("daily-graph"),
+          [
+          {% for day in dailystats %}
+              [ new Date("{{ day.date.year }}/{{ day.date.month }}/{{day.date.day }}"), {{ day.project_count }}, {{ day.successful }}, {{ day.failed }}, {{ day.errors }} ] {% if not forloop.last %},{% endif %}
+          {% endfor %}
+          ], { labels: [ "Date", "Projects", "Succssful", "Failed", "Errors" ],
+               colors: [ "#5555aa", "#48cf14", "#d65941", "#999999" ],
+               strokeWidth: 2.0,
+               drawGrid: false});
+        </script>
+      </div>
+    </div>
+  </div>
+  {% endcomment %}
 
   <div class="panel panel-default">
     <div class="panel-body">
