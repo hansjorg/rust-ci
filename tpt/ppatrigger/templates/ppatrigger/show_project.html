@@ -3,27 +3,33 @@
 {% block title %}{{ project }} - {{ title }}{% endblock %}
 
 {% block content %}
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <h3 class="panel-title">{{ project }}</h3>
+    </div>
+      <table class="table">
+        <tr>
+          <th>created</th>
+          <td>{{ project.created }}</td>
+        </tr>
+        <tr>
+          <th>builds</th>
+          <td>{{ builds | length }}</td>
+        </tr>
+        <tr>
+          <th>last build log</th>
+          <td>
+            <a href="https://travis-ci.org/{{ project.username }}/{{ project.repository }}/builds/{{ project.last_build.build_id }}">Travis CI build log</a>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2"><a href="{% url 'trigger_build' project.id %}">Trigger build</a> (only for owner)</td>
+        </tr>
+      </table>
+  </div>
+
   <div class="panel panel-default">
     <div class="panel-body">
-
-      <div class="panel panel-info">
-        <div class="panel-heading">
-          <h3 class="panel-title">{{ project }}</h3>
-        </div>
-          <table class="table">
-            <tr>
-              <th>created</th>
-              <td>{{ project.created }}</td>
-            </tr>
-            <tr>
-              <th>builds</th>
-              <td>{{ builds | length }}</td>
-            </tr>
-            <tr>
-              <td colspan="2"><a href="{% url 'trigger_build' project.id %}">Trigger build</a></td>
-            </tr>
-          </table>
-      </div>
 
       <table class="table table-striped">
         <tr>
@@ -32,7 +38,6 @@
           <th>Finished</th>
           <th style="text-align: center;">Duration</th>
           <th>Result</th>
-          <th></th>
         </tr>
         {% for build in builds %}
           <tr>
@@ -41,16 +46,15 @@
             <td>{{ build.finished_at }}</td>
             <td style="text-align: center;">{{ build.duration }}</td>
             <td>
-              {% if build.status == 0 %}
+              {% if not project.last_triggered %}
+                <img src="/static/gfx/unknown.png" alt="unknown build"/>
+              {% elif build.status == 0 %}
                 <img src="/static/gfx/passing.png" alt="passing build"/>
               {% elif build.status > 0 %}
                 <img src="/static/gfx/failing.png" alt="failing build"/>
               {% else %}
-                <img src="/static/gfx/unknown.png" alt="unknown build"/>
+                <img src="/static/gfx/error.png" alt="errored"/>
               {% endif %}
-            </td>
-            <td>
-              <a href="https://travis-ci.org/{{ build.project.username }}/{{build.project.repository}}/builds/{{ build.build_id }}">build log</a>
             </td>
           </tr>
         {% endfor %}
