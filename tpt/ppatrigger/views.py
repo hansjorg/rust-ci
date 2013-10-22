@@ -140,12 +140,34 @@ def github_callback(request):
         github_user = json.loads(urllib2.urlopen(req).read())
 
         auth_reason = request.session['auth_reason']
-        
-        # Check that we got token for the right user
-        if project.username != github_user['login']:
+       
+        #print(json.dumps(github_user, sort_keys=True, indent=4))
+
+        # Get organizations for user (to allow members of orgs to 
+        # add projects on behalf of their organization)
+        orgs_req = urllib2.Request(github_user['organizations_url'])
+        orgs_req.add_header('Accept', 'application/json')
+        orgs_req.add_header('Authorization', 'token {}'.
+                format(github_token))
+        github_user_orgs = json.loads(urllib2.urlopen(orgs_req).read())
+
+        #print(json.dumps(github_user_orgs, sort_keys=True, indent=4))
+
+        is_authorized = False
+        # Check that we got token for the right user or organization
+        if project.username == github_user['login']:
+            is_authorized = True
+        else:
+            for github_org in github_user_orgs:
+                if project.username == github_org['login']:
+                    is_authorized = True
+                    break
+
+        if not is_authorized:
             if auth_reason == 'add_project':
                 project.delete()
-            return HttpResponse('Wrong user', status=401)
+            return HttpResponse('Wrong username (does not match logged\
+                    in user or users organizations)', status=401)
         
         if auth_reason == 'delete_project':
             if not settings.DEBUG:
