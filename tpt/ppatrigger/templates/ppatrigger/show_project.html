@@ -55,7 +55,13 @@
         </tr>
         {% for build in builds %}
           <tr>
-            <td>{{ build.package_version }}</td>
+            <td>
+              <span style="font-family: Monaco, monospace;">{{ build.git_hash }}</span>
+              {% if build.git_diff %}
+                <a href="https://github.com/mozilla/rust/compare/{{ build.git_diff }}">diff</a>
+              {% endif %}
+            </td>
+
             <td>
               <a title="{{ build.message }}" href="https://github.com/{{ project.username }}/{{ project.repository }}/commit/{{ build.commit}}">{{ build.message | truncatechars:40 }}</a>
             </td>

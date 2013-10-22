@@ -1,3 +1,4 @@
+import re
 import random
 import json
 import urllib2
@@ -53,6 +54,23 @@ def help(request):
 def show_project(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     builds = Build.objects.filter(project_id__exact = project_id)
+
+    # Iterate over builds and create GitHub hash compare
+    # fragments like 'cd59a7c...886a4dd' for linking to diff
+    if len(builds):
+        prev_build = builds[len(builds) - 1]
+        # extract Git hash from version strings like:
+        # 201310190805~34a1e3d~precise
+        version_pattern = re.compile('.*~(.*)~.*')
+        for build in reversed(builds):
+            match = version_pattern.match(build.package_version)
+            if match:
+                build.git_hash = match.group(1)
+
+            if prev_build.package_version != build.package_version:
+                build.git_diff = prev_build.git_hash + '...' + build.git_hash
+
+            prev_build = build
 
     return render(request, 'ppatrigger/show_project.html',
             {'project': project,
