@@ -6,8 +6,8 @@ from django.db.models import Q
 from util.ppautil import get_packages, get_package
 from ppatrigger.models import Package, Project
 from tpt import private_settings
-from travis_client import get_last_build_on_branch
-from travis_client import restart_build
+from travisclient import get_last_build_on_branch
+from travisclient import restart_build
 
 class Command(BaseCommand):
     args = '<package_id package_id ...>'

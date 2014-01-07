@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand
 from django.db import IntegrityError
 from ppatrigger.models import Project
 from ppatrigger.models import Build
-from travis_client import get_build_by_id
+from travisclient import get_build_by_id
 import json
 
 class Command(BaseCommand):

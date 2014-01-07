@@ -1,5 +1,5 @@
 Django==1.5.4
-./python-travis-client
+git+git://github.com/hansjorg/travis-python-client.git
 argparse==1.2.1
 httplib2==0.8
 keyring==3.0.5
@@ -9,8 +9,10 @@ lazr.restfulclient==0.13.3
 lazr.uri==1.0.3
 oauth==1.0.1
 psycopg2==2.5.1
+pyasn1==0.1.7
 python-dateutil==2.1
 pytz==2013.7
+rsa==3.1.2
 simplejson==3.3.0
 six==1.4.1
 testresources==0.2.7

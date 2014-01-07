@@ -11,7 +11,7 @@ from django.conf import settings
 from tpt import private_settings
 from models import Project, Build, DailyStats
 from forms import ProjectForm
-from travis_client import get_travis_token
+from travisclient import get_travis_token
 
 def index(request, error_message = None):
     projects = Project.objects.all()

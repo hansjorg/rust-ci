@@ -1,7 +1,7 @@
 import traceback
 from django.core.management.base import BaseCommand
 from ppatrigger.models import Project
-from travis_client import get_build_by_id
+from travisclient import get_build_by_id
 import json
 
 # For debugging Travis responses

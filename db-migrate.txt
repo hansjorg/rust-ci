@@ -1,0 +1,6 @@
+ALTER TABLE ppatrigger_project ADD COLUMN "deleted" boolean;
+UPDATE ppatrigger_project SET deleted = false;
+ALTER TABLE ppatrigger_project ALTER COLUMN deleted SET NOT NULL;
+
+
+
