@@ -95,7 +95,7 @@
               {% endif %}
             </td>
             <td>
-              <a href="{% url 'show_project' project.id %}">details</a>
+              <a href="{{ project.get_absolute_url }}">details</a>
             </td>
           </tr>
         {% endfor %}

@@ -3,9 +3,9 @@ import random
 import json
 import urllib2
 from urllib import urlencode
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.core.urlresolvers import reverse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.mail import mail_admins
 from django.conf import settings
 from tpt import private_settings
@@ -51,9 +51,21 @@ def help(request):
     }
     return render(request, 'ppatrigger/help.html', context)
 
-def show_project(request, project_id):
+
+# Redirect old project url's using id
+def show_project_by_id(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
-    builds = Build.objects.filter(project_id__exact = project_id)
+    return redirect(project)
+
+def show_project(request, username, repository, branch = 'master'):
+    try:
+        project = Project.objects.get(username = username,
+                repository = repository,
+                branch = branch, deleted = False)
+    except Project.DoesNotExist:
+        raise Http404
+
+    builds = Build.objects.filter(project_id__exact = project.id)
 
     # Iterate over builds and create GitHub hash compare
     # fragments like 'cd59a7c...886a4dd' for linking to diff
@@ -78,11 +90,34 @@ def show_project(request, project_id):
             'title': private_settings.APP_TITLE})
 
 
-def trigger_build(request, project_id):
+# Show documentation artifacts for project
+def show_docs(request, username, repository, branch = 'master'):
+    try:
+        project = Project.objects.get(username = username,
+                repository = repository,
+                branch = branch, deleted = False)
+    except Project.DoesNotExist:
+        raise Http404
+
+    return render(request, 'ppatrigger/show_project.html',
+            {'project': project,
+            'builds': builds,
+            'title': private_settings.APP_TITLE})
+
+
+def action_auth_project(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+
+    return authenticate_with_github(request, project.id,
+            'get_auth_token')
+
+
+def action_trigger_build(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
     return authenticate_with_github(request, project.id,
             'trigger_rebuild')
+
 
 def add_project(request):
     if request.method == 'POST':
@@ -194,7 +229,8 @@ def github_callback(request):
                                 project.branch)
                 mail_admins('Project deleted', mail_message)
             
-            project.delete()
+            project.deleted = True
+            project.save
             return HttpResponseRedirect(reverse('ppatrigger.views.index'))
 
         else:
@@ -211,13 +247,26 @@ def github_callback(request):
                                         project.branch)
                         mail_admins('Project added', mail_message)
 
+                elif auth_reason == 'get_auth_token':
+                    # Used if initial auth failed for some reason
+                    # (i.e. no auth_token in db)
+                    project.auth_token = travis_token
+                    project.save()
+
+                    if not settings.DEBUG:
+                        mail_message = "{}/{} - {}\n\n".\
+                                format(project.username, project.repository,
+                                        project.branch)
+                        mail_admins('Project authenticated', mail_message)
+
                 elif auth_reason == 'trigger_rebuild':
+                    project.auth_token = travis_token
                     project.build_requested = True 
                     project.save()
             
                 return HttpResponseRedirect(reverse('ppatrigger.views.index'))
             else:
-                error_message = 'Error in response from Travis'
+                error_message = 'Error in response from Travis CI'
 
     else:
         error_message = 'Error in response from GitHub: {}'.\

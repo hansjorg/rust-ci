@@ -53,6 +53,22 @@ class Project(models.Model):
     author_name = models.CharField(max_length=150, null=True)
     author_email = models.CharField(max_length=150, null=True)
 
+    def get_absolute_url(self):
+        projects = Project.objects.filter(username = self.username,
+                repository = self.repository)
+
+        if(len(projects) > 1):
+            # More than one of /username/repository/, use branch too
+            url = u'/{}/{}/{}'.format(self.username, self.repository,
+                    self.branch)
+        else:
+            if(projects[0].branch != 'master'):
+                url = u'/{}/{}/{}'.format(self.username,
+                        self.repository, self.branch)
+            else:
+                url = '/{}/{}'.format(self.username, self.repository)
+        return url
+
     def __unicode__(self):
         return u'%s/%s %s' % (self.username, self.repository,
                 self.branch)

@@ -37,7 +37,11 @@
           </td>
         </tr>
         <tr>
-          <td colspan="2"><a data-toggle="tooltip" title="For owner" href="{% url 'trigger_build' project.id %}">Trigger build</a></td>
+          {% if project.auth_token %}
+            <td colspan="2"><a data-toggle="tooltip" title="For owner" href="{% url 'project.action.trigger_build' project.id %}">Trigger build</a></td>
+          {% else %}
+            <td colspan="2"><a data-toggle="tooltip" title="For owner" href="{% url 'project.action.get_auth_token' project.id %}">Authenticate</a></td>
+          {% endif %}
         </tr>
       </table>
   </div>
