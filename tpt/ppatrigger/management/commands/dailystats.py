@@ -13,7 +13,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        packages = Package.objects.all()
+        packages = Package.objects.filter(deleted = False)
 
         for package in packages:
 
@@ -58,7 +58,7 @@ class Command(BaseCommand):
                     fetched_at__lt = next_day)
 
                 project_count = Project.objects.filter(
-                        created__lt = day).count()
+                        created__lt = day, deleted = False).count()
 
                 if len(builds):
                     successful = 0

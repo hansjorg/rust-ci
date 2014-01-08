@@ -14,7 +14,7 @@ from forms import ProjectForm
 from travisclient import get_travis_token
 
 def index(request, error_message = None):
-    projects = Project.objects.all()
+    projects = Project.objects.filter(deleted = False)
     dailystats = DailyStats.objects.all()
 
     today = None

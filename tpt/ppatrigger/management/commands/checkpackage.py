@@ -60,7 +60,8 @@ class Command(BaseCommand):
             self.check_package(package, creation_time)
 
     def check_package(self, package, timestamp):
-        projects = Project.objects.filter(Q(package = package),
+        projects = Project.objects.filter(
+            Q(package = package, deleted = False),
             Q(build_requested__exact = True) |
                     Q(last_triggered__lt = timestamp))
 

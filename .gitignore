@@ -1,4 +1,5 @@
 private_settings.py
 *.pyc
+*.swp
 env
 logs/logfile

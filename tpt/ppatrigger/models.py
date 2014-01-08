@@ -35,8 +35,11 @@ class Project(models.Model):
     repository = models.CharField(max_length=100)
     branch = models.CharField(max_length=100)
 
+    deleted = models.BooleanField(default=False, null=False, blank=False)
+
+    # Travis token
     auth_token = models.CharField(max_length=100,null=True, blank=True)
-    
+
     created = models.DateTimeField(auto_now_add=True)
     changed = models.DateTimeField(auto_now=True)
 

@@ -15,7 +15,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
 
-        projects = Project.objects.filter(build_started__exact = True)
+        projects = Project.objects.filter(build_started__exact = True,
+                deleted = False)
 
         if not len(projects):
             self.stdout.write('fetchbuilds: No started builds.')

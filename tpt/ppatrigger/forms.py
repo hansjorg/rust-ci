@@ -38,7 +38,8 @@ class ProjectForm(forms.Form):
             try:
                 Project.objects.get(username__exact = username,
                         repository__exact = repository,
-                        branch__exact = branch)
+                        branch__exact = branch,
+                        deleted = False)
                 raise forms.ValidationError('Project already exists')
             except Project.DoesNotExist:
                 pass
