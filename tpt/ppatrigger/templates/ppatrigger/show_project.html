@@ -3,6 +3,12 @@
 {% block title %}{{ project }} - {{ title }}{% endblock %}
 
 {% block content %}
+  {% if error_message %}
+    <div class="alert alert-danger">
+      <strong>Error</strong> {{ error_message }}
+    </div>
+  {% endif %}
+
   <div class="panel panel-info">
     <div class="panel-heading">
       <h3 class="panel-title">{{ project }}</h3>

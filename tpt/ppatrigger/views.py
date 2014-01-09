@@ -57,7 +57,8 @@ def show_project_by_id(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     return redirect(project)
 
-def show_project(request, username, repository, branch = 'master'):
+def show_project(request, username, repository, branch = 'master',
+        error_message = None):
     try:
         project = Project.objects.get(username = username,
                 repository = repository,
@@ -87,6 +88,7 @@ def show_project(request, username, repository, branch = 'master'):
     return render(request, 'ppatrigger/show_project.html',
             {'project': project,
             'builds': builds,
+            'error_message': error_message,
             'title': private_settings.APP_TITLE})
 
 
@@ -113,6 +115,12 @@ def action_auth_project(request, project_id):
 
 
 def action_trigger_build(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+
+    return authenticate_with_github(request, project.id,
+            'trigger_rebuild')
+
+def action_get_artifact_config(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
     return authenticate_with_github(request, project.id,
@@ -178,6 +186,13 @@ def github_callback(request):
     if not state or request.GET['state'] != state:
         return HttpResponse('Unauthorized', status=401)
 
+    project_id = request.session['project_id']
+    project = Project.objects.get(pk = project_id)
+
+    auth_reason = request.session['auth_reason']
+
+    request.session.clear()
+
     data = {
         'client_id': private_settings.GITHUB_CLIENT_ID,
         'client_secret': private_settings.GITHUB_CLIENT_SECRET,
@@ -189,9 +204,6 @@ def github_callback(request):
     req.add_header('Accept', 'application/json')
     response = json.loads(urllib2.urlopen(req).read())
 
-    project_id = request.session['project_id']
-    project = Project.objects.get(pk = project_id)
-
     if 'access_token' in response and response['access_token']:
         github_token = response['access_token']
 
@@ -200,8 +212,6 @@ def github_callback(request):
         req.add_header('Authorization', 'token {}'.
                 format(github_token))
         github_user = json.loads(urllib2.urlopen(req).read())
-
-        auth_reason = request.session['auth_reason']
        
         #print(json.dumps(github_user, sort_keys=True, indent=4))
 
@@ -228,9 +238,15 @@ def github_callback(request):
         if not is_authorized:
             if auth_reason == 'add_project':
                 project.delete()
-            return HttpResponse('Wrong username (does not match logged\
-                    in user or users organizations)', status=401)
-        
+
+            error_message = 'Neither authenticated GitHub user ({}) \
+                    or that users organizations matches project \
+                    owner ({})'.format(github_user['login'],
+                    project.username)
+            return show_project(request, project.username,
+                    project.repository, project.branch,
+                    error_message)
+
         if auth_reason == 'delete_project':
             if not settings.DEBUG:
                 mail_message = "{}/{} - {}\n\n".\

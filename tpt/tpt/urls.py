@@ -18,6 +18,7 @@ urlpatterns = patterns('',
     # Legacy id based url for redirection
     url(r'^p/(?P<project_id>\d+)/$', 'ppatrigger.views.show_project_by_id', name='project.show_by_id'),
  
+    url(r'^p/(?P<project_id>\d+)/artifacts$', 'ppatrigger.views.action_get_artifact_config', name='project.action.get_artifact_config'),
     url(r'^p/(?P<project_id>\d+)/trigger$', 'ppatrigger.views.action_trigger_build', name='project.action.trigger_build'),
     url(r'^p/(?P<project_id>\d+)/auth$', 'ppatrigger.views.action_auth_project', name='project.action.get_auth_token'),
   
