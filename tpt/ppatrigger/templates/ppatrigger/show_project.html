@@ -9,27 +9,33 @@
     </div>
       <table class="table">
         <tr>
-          <th>branch</th>
+          <th>Branch</th>
           <td>
             <a href="https://github.com/{{ project.username }}/{{ project.repository }}/tree/{{ project.branch }}">{{ project.branch }}</a>
           </td>
         </tr>
         <tr>
-          <th>created</th>
+          <th>Description</th>
+          <td>
+            {{ project.description }} 
+          </td>
+        </tr>
+        <tr>
+          <th>Created</th>
           <td>{{ project.created }}</td>
         </tr>
         <tr>
-          <th>builds</th>
+          <th>Builds</th>
           <td>{{ builds | length }}</td>
         </tr>
         <tr>
-          <th>last build log</th>
+          <th>Last build log</th>
           <td>
             <a href="https://travis-ci.org/{{ project.username }}/{{ project.repository }}/builds/{{ project.last_build.build_id }}">Travis CI build log</a>
           </td>
         </tr>
         <tr>
-          <th>live status</th>
+          <th>Live status</th>
           <td>
             <a href="https://travis-ci.org/{{ project.username }}/{{ project.repository }}">
               <img src="https://travis-ci.org/{{ project.username }}/{{ project.repository }}.png"/>

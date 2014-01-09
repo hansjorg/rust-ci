@@ -11,7 +11,7 @@ from django.conf import settings
 from tpt import private_settings
 from models import Project, Build, DailyStats
 from forms import ProjectForm
-from travisclient import get_travis_token
+from travisclient import get_travis_token, get_repo
 
 def index(request, error_message = None):
     projects = Project.objects.filter(deleted = False)
@@ -124,14 +124,23 @@ def add_project(request):
         form = ProjectForm(request.POST)
 
         if form.is_valid():
-
             package = form.cleaned_data['package']
             username = form.cleaned_data['username']
             repository = form.cleaned_data['repository']
             branch = form.cleaned_data['branch']
 
+            repo = get_repo(username, repository)
+
+            if not repo:
+                error_message = 'Unable to get Travis CI repo: {}/{}'.\
+                    format(username, repository)
+                return index(request, error_message)
+
             project = Project(package = package, username = username,
                     repository = repository, branch = branch)
+           
+            if('description' in repo):
+                project.description = repo['description']
             project.save()
 
             return authenticate_with_github(request, project.id,
@@ -262,7 +271,7 @@ def github_callback(request):
                 elif auth_reason == 'trigger_rebuild':
                     project.auth_token = travis_token
                     project.build_requested = True 
-                    project.save()
+                    project.save()                
             
                 return HttpResponseRedirect(reverse('ppatrigger.views.index'))
             else:

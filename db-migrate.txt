@@ -2,5 +2,8 @@ ALTER TABLE ppatrigger_project ADD COLUMN "deleted" boolean;
 UPDATE ppatrigger_project SET deleted = false;
 ALTER TABLE ppatrigger_project ALTER COLUMN deleted SET NOT NULL;
 
+ALTER TABLE ppatrigger_project ADD COLUMN "description" text;
+UPDATE ppatrigger_project SET description = '';
+ALTER TABLE ppatrigger_project ALTER COLUMN description SET NOT NULL;
 
-
+ALTER TABLE ppatrigger_project DROP CONSTRAINT "ppatrigger_project_username_key";

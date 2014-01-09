@@ -49,6 +49,8 @@ class Project(models.Model):
     build_requested = models.BooleanField(default=True)
     build_started = models.BooleanField(default=False)
 
+    description = models.TextField(null=False, blank=True)
+
     # Retrieved from GitHub via Travis
     author_name = models.CharField(max_length=150, null=True)
     author_email = models.CharField(max_length=150, null=True)
@@ -62,6 +64,7 @@ class Project(models.Model):
             url = u'/{}/{}/{}'.format(self.username, self.repository,
                     self.branch)
         else:
+            # Branch is not master, use it in url
             if(projects[0].branch != 'master'):
                 url = u'/{}/{}/{}'.format(self.username,
                         self.repository, self.branch)
@@ -74,7 +77,6 @@ class Project(models.Model):
                 self.branch)
 
     class Meta:
-        unique_together = (('username', 'repository', 'branch'),)
         ordering = ['username', 'repository', 'branch']
 
 class Build(models.Model):

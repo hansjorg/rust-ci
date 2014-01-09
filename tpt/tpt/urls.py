@@ -8,8 +8,11 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^$', 'ppatrigger.views.index', name='index'),
 
-    url(r'^help/$', 'ppatrigger.views.help', name='help'),
+    # GitHub callback
+    url(r'^callback$', 'ppatrigger.views.github_callback'),
 
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^help/$', 'ppatrigger.views.help', name='help'),
     url(r'^p/add/$', 'ppatrigger.views.add_project', name='add_project'),
     
     # Legacy id based url for redirection
@@ -26,9 +29,5 @@ urlpatterns = patterns('',
     url(r'^(?P<username>.+?)/(?P<repository>.+?)$', 'ppatrigger.views.show_project', name='project.show'),
     url(r'^(?P<username>.+?)/(?P<repository>.+?)/docs$', 'ppatrigger.views.show_docs', name='project.show_docs'),
 
-    # GitHub callback
-    url(r'^callback$', 'ppatrigger.views.github_callback'),
-
-    url(r'^admin/', include(admin.site.urls)),
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

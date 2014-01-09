@@ -73,13 +73,15 @@
             <td><a href="https://github.com/{{ project.username }}/{{ project.repository }}">{{ project.username }}/{{ project.repository }}</a></td>
             <td class="hidden-xs">{{ project.branch }}</td>
             <td class="hidden-xs">
-              <a title="{{ project.last_build.message }}" href="https://github.com/{{ project.username }}/{{ project.repository }}/commit/{{ project.last_build.commit}}">{{ project.last_build.message | truncatechars:90 }}</a>
+              <a title="{{ project.last_build.message }}" href="https://github.com/{{ project.username }}/{{ project.repository }}/commit/{{ project.last_build.commit}}">{{ project.last_build.message | truncatechars:80 }}</a>
             </td>
-            <td>
-              {% if not project.last_triggered %}
+            <td class="status-col">
+              {% if not project.auth_token %}
+                <span class="glyphicon glyphicon-lock"></span>
+              {% elif not project.last_triggered and not project.build_requested %}
                 <img src="/static/gfx/unknown.png" alt="unknown build"/>
               {% elif project.build_requested or project.build_started %}
-                <span class="spinner"></spinner>
+                <span class="spinner"></span>
               {% elif project.last_build.status == 0 %}
                 <a href="https://travis-ci.org/{{ project.username }}/{{project.repository}}/builds/{{ project.last_build.build_id }}">
                   <img src="/static/gfx/passing.png" alt="passing build"/>
