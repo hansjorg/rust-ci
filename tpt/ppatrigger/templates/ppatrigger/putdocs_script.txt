@@ -1,0 +1,22 @@
+#!/usr/bin/env sh
+
+echo "Rust-ci putdocs starting"
+
+DOCROOT=doc
+ARTIFACTS_S3_BUCKET=rust-ci-artifacts
+ARTIFACTS_AWS_REGION=eu-west-1
+ARTIFACTS_AWS_ACCESS_KEY_ID={{ s3_access_key_id }}
+ARTIFACTS_AWS_SECRET_ACCESS_KEY={{ s3_secret_access_key }}
+DOCPATHS=`find $DOCROOT -name index.html | cut -d/ -f2 | paste -sd ","`
+
+if [[ ! -z $DOCPATHS ]]; then
+    echo "Uploading docs for $DOCPATHS"
+
+    gem install travis-artifacts
+    travis-artifacts upload --path $DOCROOT
+
+    curl http://rust-ci.org/artifacts/putdocshook?build=$TRAVIS_BUILD_ID&job=$TRAVIS_JOB_ID&buildnumber=$TRAVIS_BUILD_NUMBER&token=$RUSTCI_TOKEN&docpaths=$DOCPATHS
+else
+    echo "No docs found in directory $DOCROOT"
+fi
+

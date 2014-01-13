@@ -3,8 +3,9 @@ from django.core.management.base import BaseCommand
 from ppatrigger.models import Project
 from travisclient import get_repo
 
-# For getting project description field from Travis CI
-# New projects get when added, this command is to update existing
+# For updating existing projects with new additions
+#   * get project description field from Travis CI
+#   * set rustci_token (implicit trigger)
 class Command(BaseCommand):
     args = ''
     help = 'Fetch/update project descriptions for all projects'
@@ -18,10 +19,10 @@ class Command(BaseCommand):
             if(repo and 'description' in repo and
                     repo['description']):
                 project.description = repo['description']
-                project.save()
             
                 self.stdout.write(str(project) + ': ' +\
                         project.description)
             else:
                 self.stdout.write('No description found: ' + str(project))
 
+            project.save()

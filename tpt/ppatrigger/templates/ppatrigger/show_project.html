@@ -9,6 +9,28 @@
     </div>
   {% endif %}
 
+  {% if rustci_secure_token %}
+    <div class="panel panel-success">
+      <div class="panel-heading">
+        Enabling documentation upload for your project
+      </div>
+      <div class="panel-body">
+          To the start of your .travis.yml, add:
+<pre>
+env:
+  global:
+    - secure: {{ rustci_secure_token }}
+</pre>
+          To the end of your .travis.yml, add:
+<pre>
+after_script:
+  - curl http://rust-ci.org/artifacts/putdocs?t=$RUSTCI_TOKEN | sh
+</pre>
+      </div>
+    </div>
+  {% endif %}
+
+
   <div class="panel panel-info">
     <div class="panel-heading">
       <h3 class="panel-title">{{ project }}</h3>
@@ -49,8 +71,29 @@
           </td>
         </tr>
         <tr>
+          <th>Documentation</th>
+          <td>
+            {% for docpath in docpaths %}
+              <a href="{{ project.get_absolute_url }}/doc/{{ docpath }}">
+                {{ docpath }}
+              </a>
+            {% endfor %}
+          </td>
+        </tr>
+        <tr>
           {% if project.auth_token %}
-            <td colspan="2"><a data-toggle="tooltip" title="For owner" href="{% url 'project.action.trigger_build' project.id %}">Trigger build</a></td>
+            <td colspan="2">
+              <!-- Single button -->
+              <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                  Project owner actions <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a href="{% url 'project.action.trigger_build' project.id %}">Trigger build</a></li>
+                  <li><a href="{% url 'project.action.get_artifact_config' project.id %}">Get config for docs upload</a></li>
+                </ul>
+              </div>
+            </td>
           {% else %}
             <td colspan="2"><a data-toggle="tooltip" title="For owner" href="{% url 'project.action.get_auth_token' project.id %}">Authenticate</a></td>
           {% endif %}

@@ -2,6 +2,7 @@ import re
 import random
 import json
 import urllib2
+import travisclient
 from urllib import urlencode
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.core.urlresolvers import reverse
@@ -9,9 +10,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.core.mail import mail_admins
 from django.conf import settings
 from tpt import private_settings
-from models import Project, Build, DailyStats
+from util import iamutil
+from models import Project, ProjectDocs, Build, DailyStats
 from forms import ProjectForm
-from travisclient import get_travis_token, get_repo
 
 def index(request, error_message = None):
     projects = Project.objects.filter(deleted = False)
@@ -58,14 +59,13 @@ def show_project_by_id(request, project_id):
     return redirect(project)
 
 def show_project(request, username, repository, branch = 'master',
-        error_message = None):
+        error_message = None, rustci_secure_token = None):
     try:
         project = Project.objects.get(username = username,
                 repository = repository,
                 branch = branch, deleted = False)
     except Project.DoesNotExist:
-        raise Http404
-
+        raise Http404 
     builds = Build.objects.filter(project_id__exact = project.id)
 
     # Iterate over builds and create GitHub hash compare
@@ -85,15 +85,26 @@ def show_project(request, username, repository, branch = 'master',
 
             prev_build = build
 
+
+    # Get documentation if any
+    docs = None
+    try:
+        docs = ProjectDocs.objects.filter(project = project).\
+                latest('created_at')
+    except ProjectDocs.DoesNotExist:
+        pass
+
     return render(request, 'ppatrigger/show_project.html',
             {'project': project,
             'builds': builds,
             'error_message': error_message,
-            'title': private_settings.APP_TITLE})
+            'rustci_secure_token': rustci_secure_token,
+            'title': private_settings.APP_TITLE,
+            'docpaths': docs.get_docpaths() if docs else None})
 
 
 # Show documentation artifacts for project
-def show_docs(request, username, repository, branch = 'master'):
+def show_docs(request, username, repository, docpath, relative_path = None, branch = 'master'):
     try:
         project = Project.objects.get(username = username,
                 repository = repository,
@@ -101,10 +112,14 @@ def show_docs(request, username, repository, branch = 'master'):
     except Project.DoesNotExist:
         raise Http404
 
-    return render(request, 'ppatrigger/show_project.html',
-            {'project': project,
-            'builds': builds,
-            'title': private_settings.APP_TITLE})
+    project_docs = ProjectDocs.objects.filter(project = project).\
+            latest('created_at')
+
+    return render(request, 'ppatrigger/show_docs.html', 
+        {'project_docs': project_docs, 
+        'docpath': docpath,
+        'relative_path': relative_path,
+        'title': private_settings.APP_TITLE})
 
 
 def action_auth_project(request, project_id):
@@ -123,8 +138,14 @@ def action_trigger_build(request, project_id):
 def action_get_artifact_config(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
-    return authenticate_with_github(request, project.id,
-            'trigger_rebuild')
+    token = project.rustci_token.encode('utf-8')
+
+    rustci_secure_token = travisclient.get_secure_env_var(
+            project.username, project.repository, 'RUSTCI_TOKEN',
+            token)
+
+    return show_project(request, project.username, project.repository,
+            project.branch, rustci_secure_token = rustci_secure_token)
 
 
 def add_project(request):
@@ -137,7 +158,7 @@ def add_project(request):
             repository = form.cleaned_data['repository']
             branch = form.cleaned_data['branch']
 
-            repo = get_repo(username, repository)
+            repo = travisclient.get_repo(username, repository)
 
             if not repo:
                 error_message = 'Unable to get Travis CI repo: {}/{}'.\
@@ -162,6 +183,67 @@ def add_project(request):
             'form': form
     }
     return render(request, 'ppatrigger/add_project.html', context)
+
+
+def putdocs_script(request):
+
+    token = request.GET.get('t', None)    
+  
+    try:
+        project = Project.objects.get(rustci_token = token,
+                deleted = False)
+    except Project.DoesNotExist:
+        return HttpResponse('Unauthorized', status=401)
+
+    if not project.s3_user_name:
+        user = iamutil.create_iam_user(project.get_project_identifier())
+
+        project.s3_user_name = user['user_name']
+        project.s3_access_key_id = user['access_key_id']
+        project.s3_secret_access_key = user['secret_access_key']
+
+        project.save()
+
+    # Encrypt with project's public key
+    #key_id = travisclient.get_secure_string(project.username,
+    #        project.repository,
+    #        project.s3_access_key_id.encode('utf-8'))
+    #key = travisclient.get_secure_string(project.username,
+    #        project.repository,
+    #        project.s3_secret_access_key.encode('utf-8'))
+
+    key_id = project.s3_access_key_id.encode('utf-8')
+    key = project.s3_secret_access_key.encode('utf-8')
+
+    context = {
+            's3_access_key_id': key_id,
+            's3_secret_access_key': key
+    }
+    return render(request, 'ppatrigger/putdocs_script.txt', context,
+            content_type='text/plain')
+
+
+def putdocs_hook(request):
+    token = request.GET.get('token', None)    
+    build_id = request.GET.get('build', None)    
+    job_id = request.GET.get('job', None)
+    build_number = request.GET.get('buildnumber', None)
+    docpaths = request.GET.get('docpaths', None)    
+
+    try:
+        project = Project.objects.get(rustci_token = token,
+                deleted = False)
+       
+        docs = ProjectDocs(project = project, build_id = build_id,
+                job_id = job_id, build_number = build_number,
+                docpaths = docpaths)
+        docs.save()
+
+    except Project.DoesNotExist:
+        return HttpResponse('Unauthorized', status=401)
+
+    return HttpResponse('OK', content_type='text/plain',
+            status=200)
 
 
 def authenticate_with_github(request, project_id, auth_reason):
@@ -259,7 +341,7 @@ def github_callback(request):
             return HttpResponseRedirect(reverse('ppatrigger.views.index'))
 
         else:
-            travis_token = get_travis_token(github_token)
+            travis_token = travisclient.get_travis_token(github_token)
 
             if travis_token:
                 if auth_reason == 'add_project':

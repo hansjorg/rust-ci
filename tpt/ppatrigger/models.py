@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import post_init
+import uuid
 
 class Ppa(models.Model):
 
@@ -38,7 +40,8 @@ class Project(models.Model):
     deleted = models.BooleanField(default=False, null=False, blank=False)
 
     # Travis token
-    auth_token = models.CharField(max_length=100,null=True, blank=True)
+    auth_token = models.CharField(max_length=100, null=True, blank=True)
+    rustci_token = models.CharField(max_length=33, null=False, blank=False)
 
     created = models.DateTimeField(auto_now_add=True)
     changed = models.DateTimeField(auto_now=True)
@@ -49,11 +52,20 @@ class Project(models.Model):
     build_requested = models.BooleanField(default=True)
     build_started = models.BooleanField(default=False)
 
-    description = models.TextField(null=False, blank=True)
-
     # Retrieved from GitHub via Travis
     author_name = models.CharField(max_length=150, null=True)
     author_email = models.CharField(max_length=150, null=True)
+    # Retrieved from Travis (which gets it from GitHub) 
+    description = models.TextField(null=False, blank=True)
+
+    # AWS
+    s3_user_name = models.CharField(max_length=100, null=True, blank=True)
+    s3_access_key_id = models.CharField(max_length=50, null=True, blank=True)
+    s3_secret_access_key = models.CharField(max_length=50, null=True, blank=True) 
+
+    def get_project_identifier(self):
+        return '{}-{}-{}'.format(self.username, self.repository,
+                self.branch)
 
     def get_absolute_url(self):
         projects = Project.objects.filter(username = self.username,
@@ -78,6 +90,30 @@ class Project(models.Model):
 
     class Meta:
         ordering = ['username', 'repository', 'branch']
+
+
+def project_post_init(**kwargs):
+    project = kwargs.get('instance')
+    if(not project.rustci_token):
+        project.rustci_token = uuid.uuid4().hex
+
+post_init.connect(project_post_init, Project)
+
+
+class ProjectDocs(models.Model):
+    project = models.ForeignKey(Project)
+    created_at = models.DateTimeField(auto_now_add=True)
+    build_id = models.IntegerField(null=False)
+    build_number = models.IntegerField(null=False)
+    job_id = models.IntegerField(null=False)
+    # Comma seperated paths: ./doc/{ docpath }/..
+    docpaths = models.CharField(max_length=100, null=False)
+
+    def get_docpaths(self):
+        paths = None
+        if self.docpaths:
+            paths = self.docpaths.split(',')
+        return paths
 
 class Build(models.Model):
 
