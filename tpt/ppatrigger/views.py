@@ -15,6 +15,9 @@ from tpt import private_settings
 from util import iamutil
 from models import Project, ProjectCategory, ProjectDocs, Build, DailyStats
 from forms import ProjectForm, ProjectFormEdit
+import logging
+
+logger = logging.getLogger(__name__)
 
 def index(request, error_message = None):
     projects = Project.objects.filter(deleted = False)
@@ -169,6 +172,8 @@ def action_edit_project(request, project_id):
 
     auth_token = request.session.get('session_auth')
     if not auth_token == project.rustci_token:
+        logger.error('Unauthorized edit attempt. auth_token={}'.\
+                format(auth_token))
         return HttpResponse('Unauthorized (not allowed to edit)',
                 status=401)
 
@@ -273,6 +278,8 @@ def putdocs_script(request):
         project = Project.objects.get(rustci_token = token,
                 deleted = False)
     except Project.DoesNotExist:
+        logger.error('Project not found when requesting putdocs ' +
+            'script. token={}'.format(t))
         return HttpResponse('Unauthorized', status=401)
 
     if not project.s3_user_name:
@@ -313,6 +320,8 @@ def putdocs_hook(request):
         docs.save()
 
     except Project.DoesNotExist:
+        logger.error('Project not found when requesting putdocs ' +
+            'hook. token={}, build_id={}'.format(token, build_id))
         return HttpResponse('Unauthorized', status=401)
 
     return HttpResponse('OK', content_type='text/plain',
@@ -338,7 +347,10 @@ def authenticate_with_github(request, project_id, auth_reason):
 
 def github_callback(request):
     state = request.session['state'] if 'state' in request.session else None
-    if not state or request.GET['state'] != state:
+    state_param = request.GET['state']
+    if not state or state_param != state:
+        logger.error('github_callback failed, no state given or ' +
+            'not matching. session={}, param={}'.format(state, get_param))
         return HttpResponse('Unauthorized', status=401)
 
     project_id = request.session['project_id']
