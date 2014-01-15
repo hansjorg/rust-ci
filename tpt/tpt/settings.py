@@ -3,7 +3,7 @@ import private_settings
 
 # Django settings for tpt project.
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
@@ -33,7 +33,7 @@ SERVER_EMAIL = 'root@hiho.io'
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['.rust-ci.org', '.hiho.io', 'localhost']
+ALLOWED_HOSTS = ['www.rust-ci.org', 'rust-ci.org', 'www.hiho.io', 'hiho.io', 'localhost']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
