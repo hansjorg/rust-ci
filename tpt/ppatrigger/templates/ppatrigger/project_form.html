@@ -1,0 +1,77 @@
+{% extends "ppatrigger/base.html" %}
+
+{% load extra_tags %}
+
+{% block title %}Add project - {{ title }}{% endblock %}
+
+{% block content %}
+  <div class="panel panel-info">
+    <div class="panel-heading">Add new project</div>
+    <div class="panel-body">
+      Add an existing Travis CI project to trigger builds whenever the PPA package
+      is updated. You will be redirected to GitHub for authentication. <a href="{% url 'help' %}">More information.</a>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-body">
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {{ form.non_field_errors.as_text }}
+      </div>
+    {% endif %}
+
+    {% if editing %}            
+      <form role="form" action="{% url 'project.action.edit_project' project.id %}" method="POST">
+    {% else %}
+      <form role="form" action="{% url 'add_project' %}" method="POST">
+    {% endif %}
+      {% csrf_token %}
+
+      <div class="form-group {% if form.package.errors %}has-error{% endif %}">
+        <label class="control-label" for="package">PPA package</label>
+        <div>
+          {{ form.package }}
+        </div>
+      </div>
+
+      <div class="form-group {% if form.username.errors %}has-error{% endif %}">
+        <label class="control-label" for="username">GitHub username <span>*</span></label>
+        {% if editing %}
+          <input type="text" class="form-control" disabled value="{{ form.username.value }}">
+          <input type="hidden" name="username" value="{{ form.username.value }}">
+        {% else %}
+          <input type="text" class="form-control" name="username" id="username"
+            placeholder="username" value="{{form.username.value|default_if_none:""}}">
+        {% endif %}
+      </div>
+
+      <div class="form-group {% if form.repository.errors %}has-error{% endif %}">
+        <label class="control-label" for="repository">Repository <span>*</span></label>
+        {% if editing %}
+          <input type="text" class="form-control" disabled value="{{form.repository.value}}">
+          <input type="hidden" name="repository" value="{{form.repository.value}}">
+        {% else %}
+          <input type="text" class="form-control" name="repository" id="repository"
+            placeholder="repository" value="{{form.repository.value|default_if_none:""}}">
+        {% endif %}
+      </div>
+     
+      <div class="form-group {% if form.branch.errors %}has-error{% endif %}">
+        <label class="control-label" for="repository">Branch <span>*</span></label>
+        <input type="text" class="form-control" name="branch" id="branch"
+          placeholder="branch" value="{{form.branch.value|default_if_none:""}}">
+      </div>
+
+      <div class="form-group {% if form.categories.errors %}has-error{% endif %}">
+        <label class="control-label" for="categories">Project categories</label>
+        {{ form.categories }}
+      </div>
+
+      <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+    </div>
+  </div>
+{% endblock %}
+
