@@ -73,7 +73,9 @@
           });
 
           // initial filter
-          filter();
+          if(input.length > 0) { 
+            filter();
+          }
 
           function filter(e) {
             var filter = input.val().toLowerCase();

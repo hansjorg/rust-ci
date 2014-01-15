@@ -346,7 +346,7 @@ def authenticate_with_github(request, project_id, auth_reason):
 
 
 def github_callback(request):
-    state = request.session['state'] if 'state' in request.session else None
+    state = request.session.get('state')
     state_param = request.GET['state']
     if not state or state_param != state:
         logger.error('github_callback failed, no state given or ' +
