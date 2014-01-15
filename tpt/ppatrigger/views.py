@@ -350,7 +350,7 @@ def github_callback(request):
     state_param = request.GET['state']
     if not state or state_param != state:
         logger.error('github_callback failed, no state given or ' +
-            'not matching. session={}, param={}'.format(state, get_param))
+            'not matching. session={}, param={}'.format(state, state_param))
         return HttpResponse('Unauthorized', status=401)
 
     project_id = request.session['project_id']
