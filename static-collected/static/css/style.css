@@ -1,9 +1,28 @@
+
+/* Fix for Chosen (clash with Bootstrap) */
+
+#id_categories_chosen input {
+    height: auto !important;
+}
+
+
+/* Table alignment */
+
+td.name-col {
+    vertical-align: middle;
+}
+
+td.status-col .glyphicon,
+td.status-col .spinner {
+    margin-left: 15px;
+}
+
+/* CSS3 spinner */
+
 .spinner {
     display: block;
     width: 15px;
     height: 15px;
-    margin-left: 25%;
-    position: relative;
 
     border: 2px solid rgba(0,0,0,0.5);
     border-top-color: transparent;
