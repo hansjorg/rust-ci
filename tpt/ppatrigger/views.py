@@ -398,10 +398,12 @@ def github_callback(request):
                 error_message = 'Error in response from Travis CI'
 
     else:
+        if auth_reason == 'add_project':
+            # Unable to authorize when adding, delete
+            project.delete()
+
         error_message = 'Error in response from GitHub: {}'.\
                 format(response.get('error'))
-
-    project.delete()
 
     return index(request, error_message)
 
