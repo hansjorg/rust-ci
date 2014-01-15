@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="/static/css/style.css" />
     <link rel="stylesheet" href="/static/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/static/css/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="/static/css/chosen.min.css" />
     <title>{% block title %}{% endblock %}</title>
 </head>
 
@@ -23,6 +24,7 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
+            <li class="active"><a href="{% url 'projects' %}">Projects by category</a></li>
             <li class="active"><a href="{% url 'add_project' %}">Add project</a></li>
             <li class="active"><a href="{% url 'help' %}">Help</a></li>
           </ul>
@@ -38,10 +40,82 @@
 
     <script src="/static/js/jquery-2.0.3.min.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/chosen.jquery.min.js"></script>
 
     <script type="text/javascript">
       $(document).ready(function(){
         $("[data-toggle=tooltip]").tooltip({ placement: 'bottom'});
+
+        $(".chosen-select").chosen();
+      });
+    </script>
+
+    <script type="text/javascript">
+      $(function() {
+          var projects = $('.project-category li');
+          var categories = $('.project-category');
+          var nomatch = $('#project-filter-nomatch');
+          var docsCheckbox = $('#project-filter-docsonly');
+          var docsOnly = docsCheckbox.is(':checked');
+
+          $('#project-filter-form').on('submit', function(e) {
+            e.preventDefault();
+          });
+
+          var input = $('#project-filter-input');
+          input.on('keyup', function(e) { filter(e); });
+          docsCheckbox.on('change', function(e) {
+            docsOnly = false;
+            if($(this).is(':checked')) {
+              docsOnly = true;              
+            }
+            filter();
+          });
+
+          // initial filter
+          filter();
+
+          function filter(e) {
+            var filter = input.val().toLowerCase();
+
+            nomatch.hide();
+            categories.show();
+            projects.show(); 
+
+            // Hide non matching projects
+            projects.each(function(i, el) {
+              var projEl = $(this);
+
+              if(docsOnly) {
+                if(!projEl.data('hasdocs')) {
+                  projEl.hide();
+                }
+              }
+
+              var t = projEl.data('filter-text');
+              if(t) {
+                t = t.toLowerCase();
+                if(t.indexOf(filter) == -1) {
+                  projEl.hide();  
+                }
+              }
+            });
+
+            // Hide empty categories
+            var hidden = 0;
+            categories.each(function(i, el) {
+              var cat = $(el);
+              var ps = cat.find('li');
+              if(!ps.is(':visible')) {
+                cat.hide();
+                hidden += 1;
+              }
+            });
+
+            if(categories.length == hidden) {
+              nomatch.show();
+            }
+          }
       });
     </script>
 

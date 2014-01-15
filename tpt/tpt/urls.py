@@ -7,6 +7,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', 'ppatrigger.views.index', name='index'),
+    url(r'^projects/$', 'ppatrigger.views.projects_by_category', name='projects'),
 
     # GitHub callback
     url(r'^callback$', 'ppatrigger.views.github_callback'),

@@ -16,4 +16,15 @@ ALTER TABLE ppatrigger_project ADD COLUMN "s3_user_name" varchar(100);
 ALTER TABLE ppatrigger_project ADD COLUMN "s3_access_key_id" varchar(50);
 ALTER TABLE ppatrigger_project ADD COLUMN "s3_secret_access_key" varchar(50);
 
+# After sync
 
+CREATE TABLE "ppatrigger_project_categories" (
+    "id" serial NOT NULL PRIMARY KEY,
+    "project_id" integer NOT NULL,
+    "projectcategory_id" integer NOT NULL REFERENCES "ppatrigger_projectcategory" ("id") DEFERRABLE INITIALLY DEFERRED,
+    UNIQUE ("project_id", "projectcategory_id")
+)
+;
+ALTER TABLE "ppatrigger_project_categories" ADD CONSTRAINT "project_id_refs_id_83936aa0" FOREIGN KEY ("project_id") REFERENCES "ppatrigger_project" ("id") DEFERRABLE INITIALLY DEFERRED;
+GRANT ALL ON ppatrigger_project_categories TO travisppatrigger;
+GRANT ALL ON  ppatrigger_project_categories_id_seq TO travisppatrigger;

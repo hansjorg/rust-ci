@@ -37,7 +37,7 @@ after_script:
     </div>
       <table class="table">
         <tr>
-          <th>Branch</th>
+          <th>GitHub</th>
           <td>
             <a href="https://github.com/{{ project.username }}/{{ project.repository }}/tree/{{ project.branch }}">{{ project.branch }}</a>
           </td>
@@ -72,11 +72,19 @@ after_script:
         </tr>
         <tr>
           <th>Documentation</th>
-          <td>
-            {% for docpath in docpaths %}
+          <td>{{project.get_latests_docs }}
+            {% for docpath in project.get_latest_docs.get_docpaths %}
               <a href="{{ project.get_absolute_url }}/doc/{{ docpath }}">
                 {{ docpath }}
               </a>
+            {% endfor %}
+          </td>
+        </tr>
+        <tr>
+          <th>Categories</th>
+          <td>
+            {% for cat in project.categories.all %}
+              <a href="{% url 'projects' %}#{{ cat.name }}">{{ cat.name }}</a>
             {% endfor %}
           </td>
         </tr>
@@ -95,7 +103,7 @@ after_script:
               </div>
             </td>
           {% else %}
-            <td colspan="2"><a data-toggle="tooltip" title="For owner" href="{% url 'project.action.get_auth_token' project.id %}">Authenticate</a></td>
+            <td colspan="2"><a data-toggle="tooltip" title="For owner" href="{% url 'project.action.get_auth_token' project.id %}">Get auth token</a></td>
           {% endif %}
         </tr>
       </table>

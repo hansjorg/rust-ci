@@ -26,12 +26,28 @@ class Package(models.Model):
     def __unicode__(self):
         return u'%s %s %s' % (self.name, self.series, self.arch)
 
+class ProjectCategory(models.Model):
+
+    name = models.CharField(max_length=100)
+
+    @property
+    def project_set_sorted(self):
+        return self.project_set.order_by('repository')
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+
 
 class Project(models.Model):
 
     package = models.ForeignKey(Package)
+    categories = models.ManyToManyField(ProjectCategory)
+
     last_build = models.OneToOneField('Build', null=True,
-            related_name='_unused')
+            blank=True, related_name='_unused')
     
     username = models.CharField(max_length=100)
     repository = models.CharField(max_length=100)
@@ -47,14 +63,14 @@ class Project(models.Model):
     changed = models.DateTimeField(auto_now=True)
 
     last_triggered = models.DateTimeField(null=True, blank=True)
-    build_id = models.CharField(null=True, max_length=100)
+    build_id = models.CharField(null=True, blank=True, max_length=100)
 
     build_requested = models.BooleanField(default=True)
     build_started = models.BooleanField(default=False)
 
     # Retrieved from GitHub via Travis
-    author_name = models.CharField(max_length=150, null=True)
-    author_email = models.CharField(max_length=150, null=True)
+    author_name = models.CharField(max_length=150, null=True, blank=True)
+    author_email = models.CharField(max_length=150, null=True, blank=True)
     # Retrieved from Travis (which gets it from GitHub) 
     description = models.TextField(null=False, blank=True)
 
@@ -63,25 +79,38 @@ class Project(models.Model):
     s3_access_key_id = models.CharField(max_length=50, null=True, blank=True)
     s3_secret_access_key = models.CharField(max_length=50, null=True, blank=True) 
 
+    def get_latest_docs(self):
+        # Get documentation uploaded for project if any
+        docs = None
+        try:
+            docs = ProjectDocs.objects.filter(project = self).\
+                    latest('created_at')
+        except ProjectDocs.DoesNotExist:
+            pass
+        return docs
+
     def get_project_identifier(self):
         return '{}-{}-{}'.format(self.username, self.repository,
                 self.branch)
 
     def get_absolute_url(self):
+        return '/' + self.get_relative_path()
+
+    def get_relative_path(self):
         projects = Project.objects.filter(username = self.username,
                 repository = self.repository)
 
         if(len(projects) > 1):
             # More than one of /username/repository/, use branch too
-            url = u'/{}/{}/{}'.format(self.username, self.repository,
+            url = u'{}/{}/{}'.format(self.username, self.repository,
                     self.branch)
         else:
             # Branch is not master, use it in url
             if(projects[0].branch != 'master'):
-                url = u'/{}/{}/{}'.format(self.username,
+                url = u'{}/{}/{}'.format(self.username,
                         self.repository, self.branch)
             else:
-                url = '/{}/{}'.format(self.username, self.repository)
+                url = '{}/{}'.format(self.username, self.repository)
         return url
 
     def __unicode__(self):

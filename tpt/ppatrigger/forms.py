@@ -1,6 +1,6 @@
 from django import forms
 from models import Package
-from models import Project
+from models import Project, ProjectCategory
 
 class ProjectForm(forms.Form):
 
@@ -12,6 +12,13 @@ class ProjectForm(forms.Form):
     username = forms.CharField(max_length=100)
     repository = forms.CharField(max_length=100)
     branch = forms.CharField(max_length=100)
+    
+    widget = forms.SelectMultiple(attrs =
+            {'class': 'form-control chosen-select',
+            'data-placeholder': 'select one or more project categories'})
+    categories = forms.ModelMultipleChoiceField(required=False,
+            queryset=ProjectCategory.objects.all(),
+            widget = widget)
 
     def clean_package(self):
         id = self.cleaned_data['package']
@@ -25,7 +32,7 @@ class ProjectForm(forms.Form):
     def clean_repository(self):
         return self.cleaned_data['repository'].strip()
 
-    def clean_barnch(self):
+    def clean_branch(self):
         return self.cleaned_data['branch'].strip()
 
     def clean(self):

@@ -1,0 +1,58 @@
+{% extends "ppatrigger/base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+  <div class="panel panel-default">
+    <form role="form" id="project-filter-form" style="padding: 20px;">
+      <div class="form-group">
+        <input id="project-filter-input" type="text" value="" class="form-control" placeholder="filter projects" autocomplete="off"/>
+      </div>
+      <div class="checkbox">
+          <label>
+            <input id="project-filter-docsonly" type="checkbox"/> Projects with documentation
+          </label>
+      </div>
+    </form>
+
+    {% for cat in categories %}
+      {% if cat.project_set.all|length > 0 %}
+        <div style="padding: 10px;" class="project-category">
+          <h4 id="{{ cat.name }}">{{ cat.name }}</h4>
+            {% for project in cat.project_set_sorted.all %}
+              <ul>
+                  <li data-hasdocs="{% if project.get_latest_docs %}true{% else %}false{% endif %}" data-filter-text="{{ cat.name|lower }} {{ project.repository|lower }} {{ project.description|lower }} {{ project.username|lower }}">
+                  <a href="{{ project.get_absolute_url }}">{{ project.repository }}</a> {{ project.description }}
+                  {% if project.get_latest_docs %}(<span class="glyphicon glyphicon-book" title="documentation"></span>
+                    {% for docpath in project.get_latest_docs.get_docpaths %}
+                      <a href="{{ project.get_absolute_url }}/doc/{{ docpath }}">{{ docpath }}</a>
+                    {% endfor %})
+                  {% endif %}
+                </li>
+              </ul>
+            {% endfor %}
+        </div>
+      {% endif %}
+    {% endfor %}
+
+    <div style="padding: 10px;" class="project-category">
+      <h4>Uncategorized</h4>
+      {% for project in uncategorized %}
+        <ul>
+          <li data-hasdocs="{% if project.get_latest_docs %}true{% else %}false{% endif %}" data-filter-text="uncategorized {{ project.repository|lower }} {{ project.description|lower }} {{ project.username|lower }}">
+            <a href="{{ project.get_absolute_url }}">{{ project.repository }}</a> {{ project.description }}
+            {% if project.get_latest_docs %}(<span class="glyphicon glyphicon-book" title="documentation"></span>
+              {% for docpath in project.get_latest_docs.get_docpaths %}
+                <a href="{{ project.get_absolute_url }}/doc/{{ docpath }}">{{ docpath }}</a>
+              {% endfor %})
+            {% endif %}
+          </li>
+        </ul>
+      {% endfor %}
+    </div>
+
+    <h4 id="project-filter-nomatch" style="padding: 10px;">No matches</h4>
+  </div>
+{% endblock %}
+

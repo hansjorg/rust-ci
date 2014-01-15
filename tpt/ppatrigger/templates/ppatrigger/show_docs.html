@@ -14,6 +14,6 @@
   <script src="/static/js/jquery-2.0.3.min.js"></script>
 </head>
 <body>
-  <iframe src="http://rust-ci-artifacts.s3-website-eu-west-1.amazonaws.com/artifacts/{{ project_docs.build_id }}/{{ project_docs.job_id }}/{{ docpath }}/index.html"></iframe>
+  <iframe src="http://rust-ci-artifacts.s3-website-eu-west-1.amazonaws.com/artifacts/{{ project_docs.project.get_project_identifier}}/{{ project_docs.build_id }}/{{ project_docs.job_id }}/{{ docpath }}/index.html"></iframe>
 </body>
 </html>

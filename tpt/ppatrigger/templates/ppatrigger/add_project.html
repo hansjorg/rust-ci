@@ -1,5 +1,7 @@
 {% extends "ppatrigger/base.html" %}
 
+{% load extra_tags %}
+
 {% block title %}Add project - {{ title }}{% endblock %}
 
 {% block content %}
@@ -19,7 +21,6 @@
         {{ form.non_field_errors.as_text }}
       </div>
     {% endif %}
-
  
     <form role="form" action="{% url 'add_project' %}" method="POST">
       {% csrf_token %}
@@ -32,21 +33,38 @@
       </div>
 
       <div class="form-group {% if form.username.errors %}has-error{% endif %}">
-        <label class="control-label" for="username">GitHub username</label>
+        <label class="control-label" for="username">GitHub username <span>*</span></label>
         <input type="text" class="form-control" name="username" id="username"
           placeholder="username" value="{{form.username.value|default_if_none:""}}">
       </div>
 
       <div class="form-group {% if form.repository.errors %}has-error{% endif %}">
-        <label class="control-label" for="repository">Repository</label>
+        <label class="control-label" for="repository">Repository <span>*</span></label>
         <input type="text" class="form-control" name="repository" id="repository"
           placeholder="repository" value="{{form.repository.value|default_if_none:""}}">
       </div>
      
       <div class="form-group {% if form.branch.errors %}has-error{% endif %}">
-        <label class="control-label" for="repository">Branch</label>
+        <label class="control-label" for="repository">Branch <span>*</span></label>
         <input type="text" class="form-control" name="branch" id="branch"
           placeholder="branch" value="{{form.branch.value|default_if_none:""}}">
+      </div>
+
+      <div class="form-group {% if form.categories.errors %}has-error{% endif %}">
+        <label class="control-label" for="categories">Project categories</label>
+        {{ form.categories }}
+        {% comment %}
+        <select data-placeholder="select one or more project categories" multiple class="form-control chosen-select" name="categories" id="categories">
+          <option value=""></option>
+          {% for category in categories %}
+            {% if editing %}
+              <option value="{{ category.id }}" {% if project|project_has_category:category.id %}selected{% endif %}>{{ category.name }}</option>
+            {% else %}
+              <option value="{{ category.id }}">{{ category.name }}</option>
+            {% endif %}
+          {% endfor %}
+          {% endcomment %}
+        </select>
       </div>
 
       <button type="submit" class="btn btn-default">Submit</button>

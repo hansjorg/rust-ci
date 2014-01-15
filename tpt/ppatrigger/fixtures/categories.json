@@ -1,0 +1,513 @@
+[
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 1,
+        "fields": {
+          "name": "algebra"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 2,
+        "fields": {
+          "name": "algorithms"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 3,
+        "fields": {
+          "name": "application"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 4,
+        "fields": {
+          "name": "audio"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 5,
+        "fields": {
+          "name": "bindings"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 6,
+        "fields": {
+          "name": "build system"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 7,
+        "fields": {
+          "name": "codec"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 8,
+        "fields": {
+          "name": "command line"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 9,
+        "fields": {
+          "name": "compiler"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 10,
+        "fields": {
+          "name": "compression"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 11,
+        "fields": {
+          "name": "computation"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 12,
+        "fields": {
+          "name": "concurrency"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 13,
+        "fields": {
+          "name": "configuration"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 14,
+        "fields": {
+          "name": "console"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 15,
+        "fields": {
+          "name": "containers"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 16,
+        "fields": {
+          "name": "cryptography"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 17,
+        "fields": {
+          "name": "database"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 18,
+        "fields": {
+          "name": "data structures"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 19,
+        "fields": {
+          "name": "date and time"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 20,
+        "fields": {
+          "name": "debugging"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 21,
+        "fields": {
+          "name": "demo"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 22,
+        "fields": {
+          "name": "development"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 23,
+        "fields": {
+          "name": "documentation"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 24,
+        "fields": {
+          "name": "editor"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 25,
+        "fields": {
+          "name": "emulator"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 26,
+        "fields": {
+          "name": "encoding"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 27,
+        "fields": {
+          "name": "filesystem"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 28,
+        "fields": {
+          "name": "game"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 29,
+        "fields": {
+          "name": "game engine"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 30,
+        "fields": {
+          "name": "graphics"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 31,
+        "fields": {
+          "name": "gui"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 32,
+        "fields": {
+          "name": "hardware"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 33,
+        "fields": {
+          "name": "ide"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 34,
+        "fields": {
+          "name": "image processing"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 35,
+        "fields": {
+          "name": "io"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 36,
+        "fields": {
+          "name": "json"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 37,
+        "fields": {
+          "name": "library"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 38,
+        "fields": {
+          "name": "localization"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 39,
+        "fields": {
+          "name": "logging"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 40,
+        "fields": {
+          "name": "machine learning"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 41,
+        "fields": {
+          "name": "math"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 42,
+        "fields": {
+          "name": "misc"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 43,
+        "fields": {
+          "name": "multimedia"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 44,
+        "fields": {
+          "name": "music"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 45,
+        "fields": {
+          "name": "network"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 46,
+        "fields": {
+          "name": "opengl"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 47,
+        "fields": {
+          "name": "os"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 48,
+        "fields": {
+          "name": "os specific"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 49,
+        "fields": {
+          "name": "parser generator"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 50,
+        "fields": {
+          "name": "physics"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 51,
+        "fields": {
+          "name": "programming language"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 52,
+        "fields": {
+          "name": "protocol"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 53,
+        "fields": {
+          "name": "random number"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 54,
+        "fields": {
+          "name": "regex"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 55,
+        "fields": {
+          "name": "science"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 56,
+        "fields": {
+          "name": "scripting"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 57,
+        "fields": {
+          "name": "search"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 58,
+        "fields": {
+          "name": "security"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 59,
+        "fields": {
+          "name": "serialization"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 60,
+        "fields": {
+          "name": "serialization"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 61,
+        "fields": {
+          "name": "server"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 62,
+        "fields": {
+          "name": "sound"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 63,
+        "fields": {
+          "name": "statistics"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 64,
+        "fields": {
+          "name": "system"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 65,
+        "fields": {
+          "name": "template engine"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 66,
+        "fields": {
+          "name": "testing"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 67,
+        "fields": {
+          "name": "text"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 68,
+        "fields": {
+          "name": "tools"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 69,
+        "fields": {
+          "name": "ui"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 70,
+        "fields": {
+          "name": "video"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 71,
+        "fields": {
+          "name": "web"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 72,
+        "fields": {
+          "name": "windowing"
+        }
+      },
+      {
+        "model": "ppatrigger.ProjectCategory",
+        "pk": 73,
+        "fields": {
+          "name": "xml"
+        }
+      }
+]

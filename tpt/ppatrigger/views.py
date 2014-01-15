@@ -11,7 +11,7 @@ from django.core.mail import mail_admins
 from django.conf import settings
 from tpt import private_settings
 from util import iamutil
-from models import Project, ProjectDocs, Build, DailyStats
+from models import Project, ProjectCategory, ProjectDocs, Build, DailyStats
 from forms import ProjectForm
 
 def index(request, error_message = None):
@@ -45,6 +45,19 @@ def index(request, error_message = None):
             'error_message': error_message,
     }
     return render(request, 'ppatrigger/index.html', context)
+
+def projects_by_category(request):
+    uncategorized = Project.objects.filter(categories=None).\
+            order_by('repository')
+
+    context = {
+            'title': private_settings.APP_TITLE,
+            'categories': ProjectCategory.objects.all(),
+            'uncategorized': uncategorized,
+    }
+    return render(request, 'ppatrigger/projects_by_category.html',
+            context)
+
 
 def help(request):
     context = {
@@ -85,22 +98,12 @@ def show_project(request, username, repository, branch = 'master',
 
             prev_build = build
 
-
-    # Get documentation if any
-    docs = None
-    try:
-        docs = ProjectDocs.objects.filter(project = project).\
-                latest('created_at')
-    except ProjectDocs.DoesNotExist:
-        pass
-
     return render(request, 'ppatrigger/show_project.html',
             {'project': project,
             'builds': builds,
             'error_message': error_message,
             'rustci_secure_token': rustci_secure_token,
-            'title': private_settings.APP_TITLE,
-            'docpaths': docs.get_docpaths() if docs else None})
+            'title': private_settings.APP_TITLE})
 
 
 # Show documentation artifacts for project
@@ -157,6 +160,7 @@ def add_project(request):
             username = form.cleaned_data['username']
             repository = form.cleaned_data['repository']
             branch = form.cleaned_data['branch']
+            categories = form.cleaned_data['categories']
 
             repo = travisclient.get_repo(username, repository)
 
@@ -172,6 +176,10 @@ def add_project(request):
                 project.description = repo['description']
             project.save()
 
+            # Set categories
+            project.categories = categories
+            project.save()
+
             return authenticate_with_github(request, project.id,
                     'add_project')
 
@@ -180,7 +188,8 @@ def add_project(request):
 
     context = {
             'title': private_settings.APP_TITLE,
-            'form': form
+            'form': form,
+            'categories': ProjectCategory.objects.all()
     }
     return render(request, 'ppatrigger/add_project.html', context)
 
@@ -216,6 +225,7 @@ def putdocs_script(request):
     key = project.s3_secret_access_key.encode('utf-8')
 
     context = {
+            'project_identifier': project.get_project_identifier(),
             's3_access_key_id': key_id,
             's3_secret_access_key': key
     }

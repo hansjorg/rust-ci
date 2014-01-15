@@ -63,15 +63,13 @@
       <table class="table table-striped">
         <tr>
           <th>Project</th>
-          <th class="hidden-xs">Branch</th>
           <th class="hidden-xs">Commit</th>
           <th>Status</th>
           <th></th>
         </tr>
         {% for project in projects %}
           <tr>
-            <td><a href="https://github.com/{{ project.username }}/{{ project.repository }}">{{ project.username }}/{{ project.repository }}</a></td>
-            <td class="hidden-xs">{{ project.branch }}</td>
+            <td><a href="{{ project.get_absolute_url }}">{{ project.get_relative_path }}</a></td>
             <td class="hidden-xs">
               <a title="{{ project.last_build.message }}" href="https://github.com/{{ project.username }}/{{ project.repository }}/commit/{{ project.last_build.commit}}">{{ project.last_build.message | truncatechars:80 }}</a>
             </td>
