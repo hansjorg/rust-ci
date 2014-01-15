@@ -11,8 +11,8 @@ DOCPATHS=`find $DOCROOT -name index.html | cut -d/ -f2 | paste -sd ","`
 if [[ ! -z $DOCPATHS ]]; then
     echo "Uploading docs for $DOCPATHS"
 
-    sudo apt-get install python-virtualenv
-    virtualenv docenv
+    sudo apt-get install python-virtualenv > /dev/null
+    virtualenv docenv > /dev/null
     . docenv/bin/activate
     pip install --quiet awscli
     aws s3 cp $DOCROOT s3://rust-ci-artifacts/artifacts/{{ project_identifier }}/$TRAVIS_BUILD_ID/$TRAVIS_JOB_ID --recursive
