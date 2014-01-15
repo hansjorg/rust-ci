@@ -35,6 +35,22 @@ after_script:
     </div>
   {% endif %}
 
+  {% if delete_project %}
+    <div class="alert alert-danger">
+      <h4>Remove project?</h4>
+      <p>
+        Are you sure you want to remove this project?
+        You will be redirect to GitHub for authentication.
+      </p>
+      <p>
+        <form action="{% url 'project.action.delete_project_confirm' project.id %}" method="POST">
+          <input type="submit" class="btn btn-danger" type="button" value="Remove"/>
+          <a href="{% url 'project.show_by_id' project.id %}"><button class="btn btn-default" type="button">Cancel</button></a>
+          {% csrf_token %}
+        </form>
+      </p>
+    </div>
+  {% endif %}
 
   <div class="panel panel-info">
     <div class="panel-heading">
@@ -102,13 +118,14 @@ after_script:
                   Project owner actions <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" role="menu">
-                  <li><a href="{% url 'project.action.trigger_build' project.id %}">Trigger build</a></li>
-                  <li><a href="{% url 'project.action.get_artifact_config' project.id %}">Get config for docs upload</a></li>
+                  <li><a href="{% url 'project.action.trigger_build' project.id %}" rel="nofollow">Trigger build</a></li>
+                  <li><a href="{% url 'project.action.get_artifact_config' project.id %}" rel="nofollow">Get config for docs upload</a></li>
+                  <li><a href="{% url 'project.action.delete_project' project.id %}" rel="nofollow">Remove project</a></li>
                 </ul>
               </div>
             </td>
           {% else %}
-            <td colspan="2"><a data-toggle="tooltip" title="For owner" href="{% url 'project.action.get_auth_token' project.id %}">Get auth token</a></td>
+            <td colspan="2"><a data-toggle="tooltip" title="For owner" href="{% url 'project.action.get_auth_token' project.id %}" rel="nofollow">Get auth token</a></td>
           {% endif %}
         </tr>
       </table>

@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models.signals import post_init
+from datetime import datetime
 import uuid
 
 class Ppa(models.Model):
@@ -54,6 +55,7 @@ class Project(models.Model):
     branch = models.CharField(max_length=100)
 
     deleted = models.BooleanField(default=False, null=False, blank=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     # Travis token
     auth_token = models.CharField(max_length=100, null=True, blank=True)
@@ -113,9 +115,19 @@ class Project(models.Model):
                 url = '{}/{}'.format(self.username, self.repository)
         return url
 
+    def mark_project_deleted(self):
+        self.deleted = True
+        self.deleted_at = datetime.now()
+        self.save()
+
     def __unicode__(self):
-        return u'%s/%s %s' % (self.username, self.repository,
-                self.branch)
+        if self.deleted:
+            desc = u'%s/%s %s (deleted)' % (self.username,
+                    self.repository, self.branch)
+        else:
+            desc = u'%s/%s %s' % (self.username, self.repository,
+                    self.branch)
+        return desc
 
     class Meta:
         ordering = ['username', 'repository', 'branch']

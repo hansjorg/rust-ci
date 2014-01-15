@@ -5,8 +5,9 @@ import urllib2
 import travisclient
 from urllib import urlencode
 from django.http import HttpResponseRedirect, HttpResponse, Http404
-from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views.decorators.csrf import csrf_protect
+from django.core.urlresolvers import reverse
 from django.core.mail import mail_admins
 from django.conf import settings
 from tpt import private_settings
@@ -72,7 +73,8 @@ def show_project_by_id(request, project_id):
     return redirect(project)
 
 def show_project(request, username, repository, branch = 'master',
-        error_message = None, rustci_secure_token = None):
+        error_message = None, rustci_secure_token = None,
+        delete_project = False):
     try:
         project = Project.objects.get(username = username,
                 repository = repository,
@@ -103,7 +105,8 @@ def show_project(request, username, repository, branch = 'master',
             'builds': builds,
             'error_message': error_message,
             'rustci_secure_token': rustci_secure_token,
-            'title': private_settings.APP_TITLE})
+            'title': private_settings.APP_TITLE,
+            'delete_project': delete_project})
 
 
 # Show documentation artifacts for project
@@ -130,6 +133,23 @@ def action_auth_project(request, project_id):
 
     return authenticate_with_github(request, project.id,
             'get_auth_token')
+
+@csrf_protect
+def action_delete_project(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+
+    return show_project(request, project.username, project.repository,
+            project.branch, delete_project = True)
+
+@csrf_protect
+def action_delete_project_confirm(request, project_id):
+    if not request.method == 'POST':
+        return HttpResponse('Method not allowed', status=405)
+
+    project = get_object_or_404(Project, pk=project_id)
+
+    return authenticate_with_github(request, project.id,
+            'delete_project')
 
 
 def action_trigger_build(request, project_id):
@@ -212,14 +232,6 @@ def putdocs_script(request):
         project.s3_secret_access_key = user['secret_access_key']
 
         project.save()
-
-    # Encrypt with project's public key
-    #key_id = travisclient.get_secure_string(project.username,
-    #        project.repository,
-    #        project.s3_access_key_id.encode('utf-8'))
-    #key = travisclient.get_secure_string(project.username,
-    #        project.repository,
-    #        project.s3_secret_access_key.encode('utf-8'))
 
     key_id = project.s3_access_key_id.encode('utf-8')
     key = project.s3_secret_access_key.encode('utf-8')
@@ -329,6 +341,7 @@ def github_callback(request):
 
         if not is_authorized:
             if auth_reason == 'add_project':
+                # Unable to authorize when adding, delete
                 project.delete()
 
             error_message = 'Neither authenticated GitHub user ({}) \
@@ -346,8 +359,7 @@ def github_callback(request):
                                 project.branch)
                 mail_admins('Project deleted', mail_message)
             
-            project.deleted = True
-            project.save
+            project.mark_project_deleted()
             return HttpResponseRedirect(reverse('ppatrigger.views.index'))
 
         else:

@@ -1,6 +1,7 @@
 ALTER TABLE ppatrigger_project ADD COLUMN "deleted" boolean;
 UPDATE ppatrigger_project SET deleted = false;
 ALTER TABLE ppatrigger_project ALTER COLUMN deleted SET NOT NULL;
+ALTER TABLE ppatrigger_project ADD COLUMN "deleted_at" timestamp with time zone;
 
 ALTER TABLE ppatrigger_project ADD COLUMN "description" text;
 UPDATE ppatrigger_project SET description = '';
@@ -28,3 +29,5 @@ CREATE TABLE "ppatrigger_project_categories" (
 ALTER TABLE "ppatrigger_project_categories" ADD CONSTRAINT "project_id_refs_id_83936aa0" FOREIGN KEY ("project_id") REFERENCES "ppatrigger_project" ("id") DEFERRABLE INITIALLY DEFERRED;
 GRANT ALL ON ppatrigger_project_categories TO travisppatrigger;
 GRANT ALL ON  ppatrigger_project_categories_id_seq TO travisppatrigger;
+
+
