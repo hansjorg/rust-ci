@@ -10,10 +10,11 @@ from django.views.decorators.csrf import csrf_protect
 from django.core.urlresolvers import reverse
 from django.core.mail import mail_admins
 from django.conf import settings
+from django.core import serializers
 from tpt import private_settings
 from util import iamutil
 from models import Project, ProjectCategory, ProjectDocs, Build, DailyStats
-from forms import ProjectForm
+from forms import ProjectForm, ProjectFormEdit
 
 def index(request, error_message = None):
     projects = Project.objects.filter(deleted = False)
@@ -151,6 +152,55 @@ def action_delete_project_confirm(request, project_id):
     return authenticate_with_github(request, project.id,
             'delete_project')
 
+# 1) This is called
+# 2) User is redirected to GitHub for auth
+# 3) Local auth token is set in session
+# 4) User is redirected to edit form where token is checked
+def action_auth_session_then_edit(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+
+    return authenticate_with_github(request, project.id,
+            'edit_project')
+
+
+@csrf_protect
+def action_edit_project(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+
+    auth_token = request.session.get('session_auth')
+    if not auth_token == project.rustci_token:
+        return HttpResponse('Unauthorized (not allowed to edit)',
+                status=401)
+
+    if request.method == 'POST':
+        form = ProjectFormEdit(request.POST)
+
+        if form.is_valid():
+            project.package = form.cleaned_data['package']
+            project.branch = form.cleaned_data['branch']
+            project.categories = form.cleaned_data['categories']
+            project.save()           
+            
+            return HttpResponseRedirect(reverse(
+                'project.show_by_id',
+                args=(project.id,)))
+
+    else:
+        form = ProjectFormEdit(initial={
+            'username': project.username,
+            'repository': project.repository,
+            'branch': project.branch,
+            'categories': project.categories.all()})
+
+    context = {
+            'title': private_settings.APP_TITLE,
+            'project': project,
+            'form': form,
+            'editing': True,
+            'categories': ProjectCategory.objects.all()
+    }
+    return render(request, 'ppatrigger/project_form.html', context)
+
 
 def action_trigger_build(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
@@ -171,6 +221,7 @@ def action_get_artifact_config(request, project_id):
             project.branch, rustci_secure_token = rustci_secure_token)
 
 
+@csrf_protect
 def add_project(request):
     if request.method == 'POST':
         form = ProjectForm(request.POST)
@@ -211,7 +262,7 @@ def add_project(request):
             'form': form,
             'categories': ProjectCategory.objects.all()
     }
-    return render(request, 'ppatrigger/add_project.html', context)
+    return render(request, 'ppatrigger/project_form.html', context)
 
 
 def putdocs_script(request):
@@ -393,6 +444,13 @@ def github_callback(request):
                     project.build_requested = True 
                     project.save()                
             
+                elif auth_reason == 'edit_project':
+                    request.session['session_auth'] = project.rustci_token
+       
+                    return HttpResponseRedirect(reverse(
+                        'project.action.edit_project',
+                        args=(project.id,)))
+
                 return HttpResponseRedirect(reverse('ppatrigger.views.index'))
             else:
                 error_message = 'Error in response from Travis CI'

@@ -16,17 +16,19 @@ urlpatterns = patterns('',
     url(r'^help/$', 'ppatrigger.views.help', name='help'),
     url(r'^p/add/$', 'ppatrigger.views.add_project', name='add_project'),
 
+    # Putdocs
     url(r'^artifacts/putdocs$', 'ppatrigger.views.putdocs_script', name='putdocs_script'),
     url(r'^artifacts/putdocshook$', 'ppatrigger.views.putdocs_hook', name='putdocs_script'),
     
- 
     # Project actions
     url(r'^p/(?P<project_id>\d+)/$', 'ppatrigger.views.show_project_by_id', name='project.show_by_id'),
     url(r'^p/(?P<project_id>\d+)/artifactconf$', 'ppatrigger.views.action_get_artifact_config', name='project.action.get_artifact_config'),
     url(r'^p/(?P<project_id>\d+)/trigger$', 'ppatrigger.views.action_trigger_build', name='project.action.trigger_build'),
+    url(r'^p/(?P<project_id>\d+)/auth$', 'ppatrigger.views.action_auth_project', name='project.action.get_auth_token'),
+    url(r'^p/(?P<project_id>\d+)/edit/auth$', 'ppatrigger.views.action_auth_session_then_edit', name='project.action.auth_session_then_edit'),
+    url(r'^p/(?P<project_id>\d+)/edit$', 'ppatrigger.views.action_edit_project', name='project.action.edit_project'),
     url(r'^p/(?P<project_id>\d+)/delete$', 'ppatrigger.views.action_delete_project', name='project.action.delete_project'),
     url(r'^p/(?P<project_id>\d+)/delete/confirm$', 'ppatrigger.views.action_delete_project_confirm', name='project.action.delete_project_confirm'),
-    url(r'^p/(?P<project_id>\d+)/auth$', 'ppatrigger.views.action_auth_project', name='project.action.get_auth_token'),
   
     # /username/repository/branch
     url(r'^(?P<username>.+?)/(?P<repository>.+?)/(?P<branch>.+?)/doc/(?P<docpath>.+?)/(?P<relative_path>.+?)$', 'ppatrigger.views.show_docs', name='project.show_docs'),

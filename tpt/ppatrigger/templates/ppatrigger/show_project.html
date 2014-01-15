@@ -120,6 +120,7 @@ after_script:
                 <ul class="dropdown-menu" role="menu">
                   <li><a href="{% url 'project.action.trigger_build' project.id %}" rel="nofollow">Trigger build</a></li>
                   <li><a href="{% url 'project.action.get_artifact_config' project.id %}" rel="nofollow">Get config for docs upload</a></li>
+                  <li><a href="{% url 'project.action.auth_session_then_edit' project.id %}" rel="nofollow">Edit project</a></li>
                   <li><a href="{% url 'project.action.delete_project' project.id %}" rel="nofollow">Remove project</a></li>
                 </ul>
               </div>

@@ -2,8 +2,7 @@ from django import forms
 from models import Package
 from models import Project, ProjectCategory
 
-class ProjectForm(forms.Form):
-
+class ProjectFormEdit(forms.Form):
     choices = []   
     for package in Package.objects.all():
         choices.append((package.id, str(package)))
@@ -35,6 +34,10 @@ class ProjectForm(forms.Form):
     def clean_branch(self):
         return self.cleaned_data['branch'].strip()
 
+
+class ProjectForm(ProjectFormEdit):
+
+    # Check if project already exists
     def clean(self):
         cleaned_data = super(ProjectForm, self).clean()
         username = cleaned_data.get('username')
@@ -51,3 +54,7 @@ class ProjectForm(forms.Form):
             except Project.DoesNotExist:
                 pass
         return cleaned_data
+
+
+
+
