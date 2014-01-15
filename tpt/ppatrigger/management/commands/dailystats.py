@@ -13,7 +13,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        packages = Package.objects.filter(deleted = False)
+        packages = Package.objects.all()
 
         for package in packages:
 
