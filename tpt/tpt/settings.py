@@ -190,5 +190,10 @@ LOGGING = {
             'propagate': True,
             'level':'WARN',
         },
+        'ppatrigger': {
+            'handlers': ['logfile'],
+            'propagate': True,
+            'level':'INFO',
+        },
     }
 }
