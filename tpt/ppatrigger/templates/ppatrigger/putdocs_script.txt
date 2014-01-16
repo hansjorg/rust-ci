@@ -8,7 +8,7 @@ export AWS_ACCESS_KEY_ID={{ s3_access_key_id }}
 export AWS_SECRET_ACCESS_KEY={{ s3_secret_access_key }}
 DOCPATHS=`find $DOCROOT -name index.html | cut -d/ -f2 | paste -sd ","`
 
-if [[ ! -z $DOCPATHS ]]; then
+if [ ! -z "$DOCPATHS" ]; then
     echo "Uploading docs for $DOCPATHS"
 
     sudo apt-get install python-virtualenv > /dev/null
