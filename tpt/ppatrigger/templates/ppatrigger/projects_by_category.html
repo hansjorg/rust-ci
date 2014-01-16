@@ -20,18 +20,20 @@
       {% if cat.project_set.all|length > 0 %}
         <div style="padding: 10px;" class="project-category">
           <h4 id="{{ cat.name }}">{{ cat.name }}</h4>
+          <ul>
             {% for project in cat.project_set_sorted.all %}
-              <ul>
-                  <li data-hasdocs="{% if project.get_latest_docs %}true{% else %}false{% endif %}" data-filter-text="{{ cat.name|lower }} {{ project.repository|lower }} {{ project.description|lower }} {{ project.username|lower }}">
-                  <a href="{{ project.get_absolute_url }}">{{ project.repository }}</a> {{ project.description }}
-                  {% if project.get_latest_docs %}(<span class="glyphicon glyphicon-book" title="documentation"></span>
-                    {% for docpath in project.get_latest_docs.get_docpaths %}
-                      <a href="{{ project.get_absolute_url }}/doc/{{ docpath }}">{{ docpath }}</a>
-                    {% endfor %})
-                  {% endif %}
+              {% if not project.deleted %}
+                <li data-hasdocs="{% if project.get_latest_docs %}true{% else %}false{% endif %}" data-filter-text="{{ cat.name|lower }} {{ project.repository|lower }} {{ project.description|lower }} {{ project.username|lower }}">
+                <a href="{{ project.get_absolute_url }}">{{ project.repository }}</a> {{ project.description }}
+                {% if project.get_latest_docs %}(<span class="glyphicon glyphicon-book" title="documentation"></span>
+                  {% for docpath in project.get_latest_docs.get_docpaths %}
+                    <a href="{{ project.get_absolute_url }}/doc/{{ docpath }}">{{ docpath }}</a>
+                  {% endfor %})
+                {% endif %}
                 </li>
-              </ul>
+              {% endif %}
             {% endfor %}
+          </ul>
         </div>
       {% endif %}
     {% endfor %}

@@ -52,7 +52,8 @@ def index(request, error_message = None):
     return render(request, 'ppatrigger/index.html', context)
 
 def projects_by_category(request):
-    uncategorized = Project.objects.filter(categories=None).\
+    uncategorized = Project.objects.filter(categories=None,
+            deleted=False).\
             order_by('repository')
 
     context = {
