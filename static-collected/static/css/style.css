@@ -5,6 +5,14 @@
     height: auto !important;
 }
 
+/* Chosen height */
+
+.chosen-drop,
+.chosen-results {
+    height: 400px !important;
+    max-height: 400px !important;
+}
+
 
 /* Table alignment */
 
