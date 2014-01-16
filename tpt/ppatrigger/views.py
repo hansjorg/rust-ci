@@ -280,7 +280,7 @@ def putdocs_script(request):
                 deleted = False)
     except Project.DoesNotExist:
         logger.error('Project not found when requesting putdocs ' +
-            'script. token={}'.format(t))
+            'script. token={}'.format(token))
         return HttpResponse('Unauthorized', status=401)
 
     if not project.s3_user_name:
