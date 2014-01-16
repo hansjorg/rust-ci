@@ -18,7 +18,9 @@ urlpatterns = patterns('',
 
     # Putdocs
     url(r'^artifacts/putdocs$', 'ppatrigger.views.putdocs_script', name='putdocs_script'),
-    url(r'^artifacts/putdocshook$', 'ppatrigger.views.putdocs_hook', name='putdocs_script'),
+    url(r'^artifacts/putdocshook$', 'ppatrigger.views.putdocs_hook', name='putdocs_hook'),
+    url(r'^artifacts/put$', 'ppatrigger.views.putdocs_script', name='put_script'),
+    url(r'^artifacts/puthook$', 'ppatrigger.views.putdocs_hook', name='put_hook'),
     
     # Project actions
     url(r'^p/(?P<project_id>\d+)/$', 'ppatrigger.views.show_project_by_id', name='project.show_by_id'),
