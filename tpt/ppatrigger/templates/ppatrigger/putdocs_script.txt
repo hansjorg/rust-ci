@@ -17,7 +17,7 @@ if [ ! -z "$DOCPATHS" ]; then
     pip install --quiet awscli
     aws s3 cp $DOCROOT s3://rust-ci-artifacts/artifacts/{{ project_identifier }}/$TRAVIS_BUILD_ID/$TRAVIS_JOB_ID --recursive
 
-    curl http://www.rust-ci.org/artifacts/putdocshook?build=$TRAVIS_BUILD_ID&job=$TRAVIS_JOB_ID&buildnumber=$TRAVIS_BUILD_NUMBER&token=$RUSTCI_TOKEN&docpaths=$DOCPATHS
+    curl http://www.rust-ci.org/artifacts/putdocshook?build=$TRAVIS_BUILD_ID&job=$TRAVIS_JOB_ID&buildnumber=$TRAVIS_BUILD_NUMBER&token={{ rustci_token }}&docpaths=$DOCPATHS
 else
     echo "No docs found in directory $DOCROOT"
 fi

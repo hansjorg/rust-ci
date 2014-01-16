@@ -298,7 +298,8 @@ def putdocs_script(request):
     context = {
             'project_identifier': project.get_project_identifier(),
             's3_access_key_id': key_id,
-            's3_secret_access_key': key
+            's3_secret_access_key': key,
+            'rustci_token': project.rustci_token
     }
     return render(request, 'ppatrigger/putdocs_script.txt', context,
             content_type='text/plain')
