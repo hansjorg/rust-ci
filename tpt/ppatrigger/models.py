@@ -46,7 +46,7 @@ class ProjectCategory(models.Model):
 class Project(models.Model):
 
     package = models.ForeignKey(Package)
-    categories = models.ManyToManyField(ProjectCategory)
+    categories = models.ManyToManyField(ProjectCategory, blank=True)
 
     last_build = models.OneToOneField('Build', null=True,
             blank=True, related_name='_unused')
