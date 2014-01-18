@@ -76,7 +76,7 @@
             <td class="status-col">
               {% if not project.auth_token %}
                 <span class="glyphicon glyphicon-lock"></span>
-              {% elif not project.last_triggered and not project.build_requested %}
+              {% elif not project.last_triggered %}
                 <img src="/static/gfx/unknown.png" alt="unknown build"/>
               {% elif project.build_requested or project.build_started %}
                 <span class="spinner"></span>
