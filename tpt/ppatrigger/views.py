@@ -271,7 +271,7 @@ def add_project(request):
     return render(request, 'ppatrigger/project_form.html', context)
 
 
-def putdocs_script(request):
+def put_artifacts_script(request):
 
     token = request.GET.get('t', None)    
   
@@ -279,7 +279,7 @@ def putdocs_script(request):
         project = Project.objects.get(rustci_token = token,
                 deleted = False)
     except Project.DoesNotExist:
-        logger.error('Project not found when requesting putdocs ' +
+        logger.error('Project not found when requesting put_artifacts ' +
             'script. token={}'.format(token))
         return HttpResponse('Unauthorized', status=401)
 
@@ -301,11 +301,11 @@ def putdocs_script(request):
             's3_secret_access_key': key,
             'rustci_token': project.rustci_token
     }
-    return render(request, 'ppatrigger/putdocs_script.txt', context,
+    return render(request, 'ppatrigger/put_artifacts_script.txt', context,
             content_type='text/plain')
 
 
-def putdocs_hook(request):
+def put_artifacts_hook(request):
     token = request.GET.get('token', None)    
     build_id = request.GET.get('build', None)    
     job_id = request.GET.get('job', None)
@@ -322,7 +322,7 @@ def putdocs_hook(request):
         docs.save()
 
     except Project.DoesNotExist:
-        logger.error('Project not found when requesting putdocs ' +
+        logger.error('Project not found when requesting put_artifacs ' +
             'hook. token={}, build_id={}'.format(token, build_id))
         return HttpResponse('Unauthorized', status=401)
 
