@@ -1,2 +1,25 @@
+# -*- coding: utf-8 -*-
 
-# private
+APP_TITLE = 'Rust CI'
+
+ADMIN = ('Hans Jørgen Hoel', 'hansjorg@gmail.com')
+
+DB_ENGINE = 'django.db.backends.postgresql_psycopg2' # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+DB_NAME = 'rust-ci'
+DB_USER = 'rust-ci'
+DB_PW = ''
+
+# PPA settings
+LAUNCHPAD_CLIENT_NAME = ''
+LAUNCHPAD_INSTANCE = 'production'
+
+GITHUB_CLIENT_ID = ''
+GITHUB_CLIENT_SECRET = ''
+GITHUB_REDIRECT_URI = ''
+
+AWS_REGION = ''
+AWS_ACCESS_KEY_ID = ''
+AWS_SECRET_ACCESS_KEY = ''
+
+AWS_IAM_GROUP = ''
+
