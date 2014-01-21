@@ -12,7 +12,7 @@ from django.core.mail import mail_admins
 from django.conf import settings
 from django.core import serializers
 from tpt import private_settings
-from util import iamutil, proxyutil
+from util import iamutil, s3util, cache_groups
 from models import Project, ProjectCategory, ProjectDocs, Build, DailyStats
 from forms import ProjectForm, ProjectFormEdit
 import logging
@@ -130,17 +130,18 @@ def show_docs(request, username, repository, docpath, relative_path = None,
     if docpath.endswith('/'):
         docpath = docpath[:-1]
 
-    proxy_url = private_settings.DOCS_URL_BASE +\
-        project.get_project_identifier() + '/' +\
-        str(project_docs.build_id) + '/' + str(project_docs.job_id) +\
-        '/' + docpath + '/'
+    key_name = '{}/{}/{}/{}/{}/'.format(private_settings.BUCKET_BASE,
+            project.get_project_identifier(), project_docs.build_id,
+            project_docs.job_id, docpath)
 
     if relative_path:
-        proxy_url += relative_path
+        key_name += relative_path
     else:
-        proxy_url += 'index.html'
+        key_name += 'index.html'
 
-    return proxyutil.proxy_request(request, proxy_url)
+    proxy_response = s3util.stream_object(key_name)
+
+    return proxy_response
 
 
 def action_auth_project(request, project_id):

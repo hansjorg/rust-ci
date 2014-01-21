@@ -195,5 +195,10 @@ LOGGING = {
             'propagate': True,
             'level':'INFO',
         },
+        'util': {
+            'handlers': ['logfile'],
+            'propagate': True,
+            'level':'INFO',
+        },
     }
 }
