@@ -31,8 +31,8 @@ urlpatterns = patterns('',
     url(r'^p/(?P<project_id>\d+)/delete/confirm$', 'ppatrigger.views.action_delete_project_confirm', name='project.action.delete_project_confirm'),
   
     # /username/repository/branch
+    url(r'^(?P<username>.+?)/(?P<repository>.+?)/(?P<branch>.+?)/doc/(?P<docpath>[^\/]+?)/$', 'ppatrigger.views.show_docs', name='project.show_docs_index'),
     url(r'^(?P<username>.+?)/(?P<repository>.+?)/(?P<branch>.+?)/doc/(?P<docpath>.+?)/(?P<relative_path>.+?)$', 'ppatrigger.views.show_docs', name='project.show_docs'),
-    url(r'^(?P<username>.+?)/(?P<repository>.+?)/(?P<branch>.+?)/doc/(?P<docpath>.+?)$', 'ppatrigger.views.show_docs', name='project.show_docs_index'),
 
     # /username/repository - branch=master
     url(r'^(?P<username>.+?)/(?P<repository>.+?)/doc/(?P<docpath>.+?)/(?P<relative_path>.+?)$', 'ppatrigger.views.show_docs', name='project.show_docs'),

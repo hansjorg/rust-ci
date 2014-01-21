@@ -12,7 +12,7 @@ from django.core.mail import mail_admins
 from django.conf import settings
 from django.core import serializers
 from tpt import private_settings
-from util import iamutil
+from util import iamutil, proxyutil
 from models import Project, ProjectCategory, ProjectDocs, Build, DailyStats
 from forms import ProjectForm, ProjectFormEdit
 import logging
@@ -115,7 +115,8 @@ def show_project(request, username, repository, branch = 'master',
 
 
 # Show documentation artifacts for project
-def show_docs(request, username, repository, docpath, relative_path = None, branch = 'master'):
+def show_docs(request, username, repository, docpath, relative_path = None,
+        branch = 'master'):
     try:
         project = Project.objects.get(username = username,
                 repository = repository,
@@ -126,11 +127,20 @@ def show_docs(request, username, repository, docpath, relative_path = None, bran
     project_docs = ProjectDocs.objects.filter(project = project).\
             latest('created_at')
 
-    return render(request, 'ppatrigger/show_docs.html', 
-        {'project_docs': project_docs, 
-        'docpath': docpath,
-        'relative_path': relative_path,
-        'title': private_settings.APP_TITLE})
+    if docpath.endswith('/'):
+        docpath = docpath[:-1]
+
+    proxy_url = private_settings.DOCS_URL_BASE +\
+        project.get_project_identifier() + '/' +\
+        str(project_docs.build_id) + '/' + str(project_docs.job_id) +\
+        '/' + docpath + '/'
+
+    if relative_path:
+        proxy_url += relative_path
+    else:
+        proxy_url += 'index.html'
+
+    return proxyutil.proxy_request(request, proxy_url)
 
 
 def action_auth_project(request, project_id):

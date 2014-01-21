@@ -157,6 +157,11 @@ class ProjectDocs(models.Model):
             paths = self.docpaths.split(',')
         return paths
 
+    def __unicode__(self):
+        return '{}/{}/{}'.format(self.project.get_project_identifier(),
+            self.build_id, self.build_number)
+
+
 class Build(models.Model):
 
     project = models.ForeignKey(Project)

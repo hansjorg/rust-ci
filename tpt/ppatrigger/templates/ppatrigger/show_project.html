@@ -95,7 +95,7 @@ after_script:
           <th>Documentation</th>
           <td>{{project.get_latests_docs }}
             {% for docpath in project.get_latest_docs.get_docpaths %}
-              <a href="{{ project.get_absolute_url }}/doc/{{ docpath }}">{{ docpath }}</a>
+              <a href="{{ project.get_absolute_url }}/doc/{{ docpath }}/">{{ docpath }}</a>
             {% endfor %}
           </td>
         </tr>
