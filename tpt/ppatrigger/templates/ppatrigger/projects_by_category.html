@@ -27,7 +27,7 @@
                 <a href="{{ project.get_absolute_url }}">{{ project.repository }}</a> {{ project.description }}
                 {% if project.get_latest_docs %}(<span class="glyphicon glyphicon-book" title="documentation"></span>
                   {% for docpath in project.get_latest_docs.get_docpaths %}
-                    <a href="{{ project.get_absolute_url }}/doc/{{ docpath }}">{{ docpath }}</a>
+                    <a href="{{ project.get_absolute_url }}/doc/{{ docpath }}/">{{ docpath }}</a>
                   {% endfor %})
                 {% endif %}
                 </li>
@@ -46,7 +46,7 @@
           <a href="{{ project.get_absolute_url }}">{{ project.repository }}</a> {{ project.description }}
           {% if project.get_latest_docs %}(<span class="glyphicon glyphicon-book" title="documentation"></span>
             {% for docpath in project.get_latest_docs.get_docpaths %}
-              <a href="{{ project.get_absolute_url }}/doc/{{ docpath }}">{{ docpath }}</a>
+              <a href="{{ project.get_absolute_url }}/doc/{{ docpath }}/">{{ docpath }}</a>
             {% endfor %})
           {% endif %}
         </li>
