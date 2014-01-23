@@ -17,7 +17,7 @@ def project_handler(sender, instance, **kwargs):
 @receiver(post_save, sender=ProjectDocs)
 def project_docs_handler(sender, instance, **kwargs):
     # Ban all project docs from varnish
-    varnishutil.ban_cache_groups(instance.get_cache_group())
+    varnishutil.ban_cache_groups(instance.get_cache_groups())
 
 
 @receiver(post_save, sender=DailyStats)
