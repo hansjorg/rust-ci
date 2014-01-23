@@ -45,6 +45,9 @@ class ProjectCategory(models.Model):
 
 class Project(models.Model):
 
+    # For Varnish
+    class_cache_group = 'rustci-projects'
+
     package = models.ForeignKey(Package)
     categories = models.ManyToManyField(ProjectCategory, blank=True)
 
@@ -92,7 +95,7 @@ class Project(models.Model):
             pass
         return docs
 
-    def get_project_identifier(self):
+    def get_identifier(self):
         return '{}-{}-{}'.format(self.username, self.repository,
                 self.branch)
 
@@ -120,6 +123,9 @@ class Project(models.Model):
         self.deleted = True
         self.deleted_at = datetime.utcnow().replace(tzinfo=utc)
         self.save()
+
+    def get_cache_groups(self):
+        return self.class_cache_group
 
     def __unicode__(self):
         if self.deleted:
@@ -157,8 +163,11 @@ class ProjectDocs(models.Model):
             paths = self.docpaths.split(',')
         return paths
 
+    def get_cache_groups(self):
+        return 'docs-' + self.project.get_identifier()
+
     def __unicode__(self):
-        return '{}/{}/{}'.format(self.project.get_project_identifier(),
+        return '{}/{}/{}'.format(self.project.get_identifier(),
             self.build_id, self.build_number)
 
 
@@ -229,3 +238,6 @@ class DailyStats(models.Model):
 
     class Meta:
         ordering = ['date']
+
+# Register signals
+import signals

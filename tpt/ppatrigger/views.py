@@ -12,7 +12,7 @@ from django.core.mail import mail_admins
 from django.conf import settings
 from django.core import serializers
 from tpt import private_settings
-from util import iamutil, s3util, cache_groups
+from util import iamutil, s3util, varnishutil
 from models import Project, ProjectCategory, ProjectDocs, Build, DailyStats
 from forms import ProjectForm, ProjectFormEdit
 import logging
@@ -64,13 +64,11 @@ def projects_by_category(request):
     return render(request, 'ppatrigger/projects_by_category.html',
             context)
 
-
 def help(request):
     context = {
             'title': private_settings.APP_TITLE,
     }
     return render(request, 'ppatrigger/help.html', context)
-
 
 # Redirect old project url's using id
 def show_project_by_id(request, project_id):
@@ -105,7 +103,7 @@ def show_project(request, username, repository, branch = 'master',
 
             prev_build = build
 
-    return render(request, 'ppatrigger/show_project.html',
+    response = render(request, 'ppatrigger/show_project.html',
             {'project': project,
             'builds': builds,
             'error_message': error_message,
@@ -113,6 +111,8 @@ def show_project(request, username, repository, branch = 'master',
             'title': private_settings.APP_TITLE,
             'delete_project': delete_project})
 
+    varnishutil.set_cache_group(response, project)
+    return response
 
 # Show documentation artifacts for project
 def show_docs(request, username, repository, docpath, relative_path = None,
@@ -131,7 +131,7 @@ def show_docs(request, username, repository, docpath, relative_path = None,
         docpath = docpath[:-1]
 
     key_name = '{}/{}/{}/{}/{}/'.format(private_settings.BUCKET_BASE,
-            project.get_project_identifier(), project_docs.build_id,
+            project.get_identifier(), project_docs.build_id,
             project_docs.job_id, docpath)
 
     if relative_path:
@@ -140,6 +140,8 @@ def show_docs(request, username, repository, docpath, relative_path = None,
         key_name += 'index.html'
 
     proxy_response = s3util.stream_object(key_name)
+
+    varnishutil.set_cache_group(proxy_response, project_docs)
 
     return proxy_response
 
@@ -295,7 +297,7 @@ def put_artifacts_script(request):
         return HttpResponse('Unauthorized', status=401)
 
     if not project.s3_user_name:
-        user = iamutil.create_iam_user(project.get_project_identifier())
+        user = iamutil.create_iam_user(project.get_identifier())
 
         project.s3_user_name = user['user_name']
         project.s3_access_key_id = user['access_key_id']
@@ -307,7 +309,7 @@ def put_artifacts_script(request):
     key = project.s3_secret_access_key.encode('utf-8')
 
     context = {
-            'project_identifier': project.get_project_identifier(),
+            'project_identifier': project.get_identifier(),
             's3_access_key_id': key_id,
             's3_secret_access_key': key,
             'rustci_token': project.rustci_token
