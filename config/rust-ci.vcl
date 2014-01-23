@@ -12,10 +12,10 @@ acl purge {
 sub vcl_recv {
   set req.backend = nginx;
 
-  if ((req.url ~ "/p/") || (req.url ~ "/admin") || (req.url ~ "/artifacts")) {
+  if ((req.url ~ "/p/") || (req.url ~ "/admin") || (req.url ~ "/artifacts") || (req.url ~ "/callback")) {
     return(pass);
-  } 
-    
+  }
+
   # Normalize host header (for test env)
   set req.http.Host = "www.rust-ci.org";
 
@@ -48,7 +48,7 @@ sub vcl_miss {
 
 sub vcl_fetch {
   # Remove set-cookie from backend response
-  if (!(req.url ~ "/p/") && !(req.url ~ "/admin") && !(req.url ~ "/artifacts")) {
+  if (!(req.url ~ "/p/") && !(req.url ~ "/admin") && !(req.url ~ "/artifacts") && !(req.url ~ "/callback")) {
     unset beresp.http.set-cookie;
   }
 
