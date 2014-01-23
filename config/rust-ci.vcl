@@ -48,7 +48,9 @@ sub vcl_miss {
 
 sub vcl_fetch {
   # Remove set-cookie from backend response
-  unset beresp.http.set-cookie;
+  if (!(req.url ~ "/p/") && !(req.url ~ "/admin") && !(req.url ~ "/artifacts")) {
+    unset beresp.http.set-cookie;
+  }
 
   # Remove Expires from backend
   unset beresp.http.expires;
