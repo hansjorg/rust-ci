@@ -12,7 +12,7 @@ from django.core.mail import mail_admins
 from django.conf import settings
 from django.core import serializers
 from tpt import private_settings
-from util import iamutil, s3util, varnishutil
+from util import s3util, varnishutil
 from models import Project, ProjectCategory, ProjectDocs, Build, DailyStats
 from forms import ProjectForm, ProjectFormEdit
 import logging
@@ -296,14 +296,8 @@ def put_artifacts_script(request):
             'script. token={}'.format(token))
         return HttpResponse('Unauthorized', status=401)
 
-    if not project.s3_user_name:
-        user = iamutil.create_iam_user(project.get_identifier())
-
-        project.s3_user_name = user['user_name']
-        project.s3_access_key_id = user['access_key_id']
-        project.s3_secret_access_key = user['secret_access_key']
-
-        project.save()
+    project.create_s3_credentials()
+    project.save()
 
     key_id = project.s3_access_key_id.encode('utf-8')
     key = project.s3_secret_access_key.encode('utf-8')
@@ -323,11 +317,13 @@ def put_artifacts_hook(request):
     build_id = request.GET.get('build', None)    
     job_id = request.GET.get('job', None)
     build_number = request.GET.get('buildnumber', None)
-    docpaths = request.GET.get('docpaths', None)    
+    docpaths = request.GET.get('docpaths', '')    
 
     try:
         project = Project.objects.get(rustci_token = token,
                 deleted = False)
+        project.delete_s3_credentials()
+        project.save()
        
         docs = ProjectDocs(project = project, build_id = build_id,
                 job_id = job_id, build_number = build_number,

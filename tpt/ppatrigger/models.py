@@ -2,6 +2,8 @@ from django.db import models
 from django.db.models.signals import post_init
 from datetime import datetime
 from django.utils.timezone import utc
+from util import iamutil
+import pytz
 import uuid
 
 class Ppa(models.Model):
@@ -81,9 +83,27 @@ class Project(models.Model):
     description = models.TextField(null=False, blank=True)
 
     # AWS
+    s3_creds_created_at = models.DateTimeField(null=True, blank=True)
     s3_user_name = models.CharField(max_length=100, null=True, blank=True)
     s3_access_key_id = models.CharField(max_length=50, null=True, blank=True)
     s3_secret_access_key = models.CharField(max_length=50, null=True, blank=True) 
+
+    def create_s3_credentials(self):
+        if not self.s3_user_name:
+            user = iamutil.create_user(self.get_identifier())
+            self.s3_creds_created_at = datetime.utcnow().replace(tzinfo = pytz.utc)
+            self.s3_user_name = user['user_name']
+            self.s3_access_key_id = user['access_key_id']
+            self.s3_secret_access_key = user['secret_access_key']
+
+    def delete_s3_credentials(self):
+        if self.s3_user_name and self.s3_access_key_id:
+            user = iamutil.delete_user(self.s3_user_name,
+                    self.s3_access_key_id)
+        self.s3_creds_created_at = None
+        self.s3_user_name = None
+        self.s3_access_key_id = None
+        self.s3_secret_access_key = None
 
     def get_latest_docs(self):
         # Get documentation uploaded for project if any
@@ -104,7 +124,7 @@ class Project(models.Model):
 
     def get_relative_path(self):
         projects = Project.objects.filter(username = self.username,
-                repository = self.repository)
+                repository = self.repository, deleted = False)
 
         if(len(projects) > 1):
             # More than one of /username/repository/, use branch too
