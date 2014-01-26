@@ -73,6 +73,8 @@ def help(request):
 # Redirect old project url's using id
 def show_project_by_id(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
+    if project.deleted:
+        raise Http404 
     return redirect(project)
 
 def show_project(request, username, repository, branch = 'master',
