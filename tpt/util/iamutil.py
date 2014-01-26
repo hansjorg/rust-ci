@@ -59,5 +59,5 @@ def delete_user(user_name, access_key_id):
     except BotoServerError, e:
         logger.error('Unable to delete iam user "{}": {}, {}'.format(user_name,
             e.status, e.reason))
-        raise Exception('iam delete error') 
+        #raise Exception('iam delete error') 
 
