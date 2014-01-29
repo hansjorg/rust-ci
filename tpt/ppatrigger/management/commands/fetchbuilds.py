@@ -5,7 +5,7 @@ from django.core.management.base import BaseCommand
 from django.db import IntegrityError
 from ppatrigger.models import Project
 from ppatrigger.models import Build
-from travisclient import get_build_by_id
+import travisclient
 import json
 
 class Command(BaseCommand):
@@ -31,7 +31,7 @@ class Command(BaseCommand):
                 # build which may have finished by now. Check and
                 # save a build data entry if so.
 
-                build = get_build_by_id(project.build_id)
+                build = travisclient.get_build_by_id(project.build_id)
 
                 if build and 'state' in build:
                     build_state = build['state']
