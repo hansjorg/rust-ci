@@ -75,6 +75,11 @@ class Command(BaseCommand):
                             project.build_started = False
                             project.author_name = build['author_name']
                             project.author_email = build['author_email']
+
+                            repo = travisclient.get_repo(project.username,
+                                    project.repository)
+                            if repo and 'description' in repo:
+                                project.description = repo['description']
                             project.save()
                         except IntegrityError:
                             # TODO: temp fix for missing result from Travis
@@ -88,5 +93,3 @@ class Command(BaseCommand):
                         self.stdout.write(str(project) + ': Build not '
                                 'finished, state: ' + build_state)
 
-
-    
