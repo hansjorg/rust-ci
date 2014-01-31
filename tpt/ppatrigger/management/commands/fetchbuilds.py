@@ -78,7 +78,7 @@ class Command(BaseCommand):
 
                             repo = travisclient.get_repo(project.username,
                                     project.repository)
-                            if repo and 'description' in repo:
+                            if repo and 'description' in repo and repo['description']:
                                 project.description = repo['description']
                             project.save()
                         except IntegrityError:
