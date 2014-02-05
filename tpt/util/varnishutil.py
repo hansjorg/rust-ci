@@ -27,6 +27,9 @@ def ban_cache_groups(cache_groups):
             group = obj
         elif inspect.isclass(obj):
             group = obj.class_cache_group
+        else:
+            raise Exception('Unknown type of cache_groups param: ' +
+                    str(type(obj)))
 
         ban_expr = 'obj.http.x-cache-group ~ "{}"'.format(group)
 
