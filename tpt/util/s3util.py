@@ -13,7 +13,7 @@ def stream_object(key_name):
             aws_access_key_id = private_settings.AWS_ACCESS_KEY_ID,
             aws_secret_access_key = private_settings.AWS_SECRET_ACCESS_KEY)
 
-    bucket = s3.get_bucket(private_settings.AWS_S3_BUCKET)
+    bucket = s3.get_bucket(private_settings.AWS_S3_BUCKET, validate=False)
 
     key = bucket.get_key(key_name)
 
