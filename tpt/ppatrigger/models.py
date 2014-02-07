@@ -131,8 +131,8 @@ class Project(models.Model):
             url = u'{}/{}/{}'.format(self.username, self.repository,
                     self.branch)
         else:
-            # Branch is not master, use it in url
-            if(projects[0].branch != 'master'):
+            if(self.branch != 'master'):
+                # Branch is not master, use it in url
                 url = u'{}/{}/{}'.format(self.username,
                         self.repository, self.branch)
             else:
