@@ -426,9 +426,7 @@ def github_callback(request):
                     or that users organizations matches project \
                     owner ({})'.format(github_user['login'],
                     project.username)
-            return show_project(request, project.username,
-                    project.repository, project.branch,
-                    error_message)
+            return index(request, error_message)
 
         if auth_reason == 'delete_project':
             if not settings.DEBUG:
