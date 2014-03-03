@@ -3,7 +3,7 @@ import private_settings
 
 # Django settings for tpt project.
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
