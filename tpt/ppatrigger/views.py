@@ -264,8 +264,10 @@ def add_project(request):
             project = Project(package = package, username = username,
                     repository = repository, branch = branch)
            
-            if('description' in repo):
+            if('description' in repo and repo['description']):
                 project.description = repo['description']
+            else:
+                project.description = ''
             project.save()
 
             # Set categories
