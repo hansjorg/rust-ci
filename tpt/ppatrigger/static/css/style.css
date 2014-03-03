@@ -1,4 +1,10 @@
 
+/* Projects by categories */
+
+.project-category img {
+    height: 15px;
+}
+
 /* Fix for Chosen (clash with Bootstrap) */
 
 #id_categories_chosen input {

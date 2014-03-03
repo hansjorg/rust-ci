@@ -57,6 +57,8 @@
           var nomatch = $('#project-filter-nomatch');
           var docsCheckbox = $('#project-filter-docsonly');
           var docsOnly = docsCheckbox.is(':checked');
+          var passingCheckbox = $('#project-filter-passingonly');
+          var passingOnly = passingCheckbox.is(':checked');
 
           $('#project-filter-form').on('submit', function(e) {
             e.preventDefault();
@@ -68,6 +70,13 @@
             docsOnly = false;
             if($(this).is(':checked')) {
               docsOnly = true;              
+            }
+            filter();
+          });
+          passingCheckbox.on('change', function(e) {
+            passingOnly = false;
+            if($(this).is(':checked')) {
+              passingOnly = true;              
             }
             filter();
           });
@@ -90,6 +99,11 @@
 
               if(docsOnly) {
                 if(!projEl.data('hasdocs')) {
+                  projEl.hide();
+                }
+              }
+              if(passingOnly) {
+                if(!projEl.data('ispassing')) {
                   projEl.hide();
                 }
               }
