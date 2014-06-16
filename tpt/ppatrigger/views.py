@@ -132,18 +132,33 @@ def show_docs(request, username, repository, docpath, relative_path = None,
     if docpath.endswith('/'):
         docpath = docpath[:-1]
 
-    key_name = '{}/{}/{}/{}/{}/'.format(private_settings.BUCKET_BASE,
-            project.get_identifier(), project_docs.build_id,
-            project_docs.job_id, docpath)
+    if docpath in project_docs.get_docpaths() or docpath == 'src':
+        # requests for "/user/project/doc/{module|src}/..."
+        key_name = '{}/{}/{}/{}/{}/'.format(private_settings.BUCKET_BASE,
+                project.get_identifier(), project_docs.build_id,
+                project_docs.job_id, docpath)
 
-    if relative_path:
-        key_name += relative_path
+        if relative_path:
+            key_name += relative_path
+        else:
+            key_name += 'index.html'
+
     else:
-        key_name += 'index.html'
+        # requests for e.g. "/user/project/doc/main.js"
+        key_name = '{}/{}/{}/{}/{}'.format(private_settings.BUCKET_BASE,
+                project.get_identifier(), project_docs.build_id,
+                project_docs.job_id, docpath)
 
     proxy_response = s3util.stream_object(key_name)
 
     varnishutil.set_cache_group(proxy_response, project_docs)
+
+    # Mitigate XSS attempts
+    proxy_response['Content-Security-Policy'] = \
+            "default-src 'none'; " +\
+            "script-src 'unsafe-inline' 'self'; " +\
+            "font-src http://themes.googleusercontent.com 'self'; "+\
+            "style-src http://fonts.googleapis.com 'self';"
 
     return proxy_response
 
