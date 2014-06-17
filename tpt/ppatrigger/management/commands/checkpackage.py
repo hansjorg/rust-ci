@@ -7,7 +7,7 @@ from util.ppautil import get_packages, get_package
 from ppatrigger.models import Package, Project
 from tpt import private_settings
 from travisclient import get_last_build_on_branch
-from travisclient import restart_build
+from travisclient import restart_build, AuthException
 
 class Command(BaseCommand):
     args = '<package_id package_id ...>'
@@ -81,10 +81,15 @@ class Command(BaseCommand):
     def trigger_project_build(self, project, timestamp):
 
         build = get_last_build_on_branch(project.username, project.repository, project.branch)
-       
+
         if build:
             last_build_id = build['branch']['id']
-            response = restart_build(project.auth_token, last_build_id)
+
+            response = None
+            try:
+                response = restart_build(project.auth_token, last_build_id)
+            except AuthException:
+                self.scratch_auth_token(project)
 
             started = False
             if response and 'result' in response:
@@ -119,5 +124,9 @@ class Command(BaseCommand):
                     + str(project))
 
 
-
-
+    def scratch_auth_token(self, project):
+        self.stdout.write('Got auth error from Travis, scratching token for project: ' 
+                    + str(project))
+        project.auth_token = None
+        project.save()
+ 
