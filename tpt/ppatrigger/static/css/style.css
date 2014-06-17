@@ -26,9 +26,13 @@ td.name-col {
     vertical-align: middle;
 }
 
-td.status-col .glyphicon,
+td.status-col a.authenticate-project,
 td.status-col .spinner {
     margin-left: 30px;
+}
+
+td.status-col a.authenticate-project {
+    color: #c00;
 }
 
 /* CSS3 spinner */

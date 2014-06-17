@@ -15,12 +15,19 @@ from tpt import private_settings
 from util import s3util, varnishutil
 from models import Project, ProjectCategory, ProjectDocs, Build, DailyStats
 from forms import ProjectForm, ProjectFormEdit
+from itertools import chain
 import logging
 
 logger = logging.getLogger(__name__)
 
 def index(request, error_message = None):
-    projects = Project.objects.filter(deleted = False)
+    projects_with_token = Project.objects.filter(deleted = False).\
+            exclude(auth_token__exact='')
+    projects_without_token = Project.objects.filter(deleted = False,
+            auth_token__exact='')
+
+    projects = list(chain(projects_with_token, projects_without_token))
+
     dailystats = DailyStats.objects.all()
 
     today = None

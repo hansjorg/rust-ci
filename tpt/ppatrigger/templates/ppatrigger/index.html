@@ -75,7 +75,7 @@
             </td>
             <td class="status-col">
               {% if not project.auth_token %}
-                <span class="glyphicon glyphicon-lock"></span>
+                <a class="authenticate-project" data-toggle="tooltip" title="Unable to build. Click and authenticate as owner to fix." href="{% url 'project.action.get_auth_token' project.id %}" rel="nofollow"><span class="glyphicon glyphicon-lock"></a>
               {% elif not project.last_triggered %}
                 <img src="/static/gfx/unknown.png" alt="unknown build"/>
               {% elif project.build_requested or project.build_started %}
