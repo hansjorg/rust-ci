@@ -367,10 +367,13 @@ def authenticate_with_github(request, project_id, auth_reason):
     request.session['auth_reason'] = auth_reason
 
     redirect_uri = private_settings.GITHUB_REDIRECT_URI
+    scope_req = 'read:org,user:email,repo_deployment,repo:status,write:repo_hook'
     return HttpResponseRedirect('https://github.com/login/'
-            'oauth/authorize?client_id={}&scope=public_repo'
+            'oauth/authorize?client_id={}&scope={}'
             '&state={}&redirect_uri={}'.format(
-                private_settings.GITHUB_CLIENT_ID, state,
+                private_settings.GITHUB_CLIENT_ID,
+                scope_req,
+                state,
                 urllib2.quote(redirect_uri))
             )
 
