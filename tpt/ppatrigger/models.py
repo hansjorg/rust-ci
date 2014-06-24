@@ -175,7 +175,7 @@ class ProjectDocs(models.Model):
     build_number = models.IntegerField(null=False)
     job_id = models.IntegerField(null=False)
     # Comma seperated paths: ./doc/{ docpath }/..
-    docpaths = models.CharField(max_length=100, null=False)
+    docpaths = models.CharField(max_length=300, null=False)
 
     def get_docpaths(self):
         paths = None
