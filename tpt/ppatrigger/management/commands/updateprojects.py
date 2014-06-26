@@ -5,6 +5,7 @@ from travisclient import get_repo
 from tpt import private_settings
 import urllib2
 from urllib2 import URLError
+from util import varnishutil
 
 # For updating existing projects with new additions
 #   * get project description field from Travis CI
@@ -16,6 +17,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
+        changed = False
         for project in Project.objects.filter(deleted = False):
 
             #repo = get_repo(project.username, project.repository)
@@ -43,6 +45,12 @@ class Command(BaseCommand):
 
             try:
                 response = urllib2.urlopen(req)
+
+                if project.cargo_support == False:
+                    changed = True
+                    # Cargo.toml added, ban all project pages
+                    varnishutil.ban_cache_groups(Project)
+
                 project.cargo_support = True
                 self.stdout.write('Found Cargo.toml: ' + str(project))
             except URLError, e:
@@ -50,3 +58,10 @@ class Command(BaseCommand):
                 pass
             
             project.save()
+
+        if changed:
+            varnishutil.purge_urls([
+                reverse('index'),
+                reverse('projects')])
+
+
