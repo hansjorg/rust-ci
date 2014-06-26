@@ -1,5 +1,6 @@
 import traceback
 from django.core.management.base import BaseCommand
+from django.core.urlresolvers import reverse
 from ppatrigger.models import Project
 from travisclient import get_repo
 from tpt import private_settings
@@ -53,8 +54,10 @@ class Command(BaseCommand):
 
                 project.cargo_support = True
                 self.stdout.write('Found Cargo.toml: ' + str(project))
-            except URLError, e:
+            except URLError, e:                
                 self.stdout.write('No Cargo.toml: ' + str(project) + str(e.code))
+                if e.code == 404:
+                    project.cargo_support = False
                 pass
             
             project.save()
