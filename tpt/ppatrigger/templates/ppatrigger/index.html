@@ -64,14 +64,19 @@
         <tr>
           <th>Project</th>
           <th class="hidden-xs">Commit</th>
-          <th>Status</th>
-          <th></th>
+          <th>Cargo</th>
+          <th align="center">Status</th>
         </tr>
         {% for project in projects %}
           <tr>
             <td><a href="{{ project.get_absolute_url }}">{{ project.get_relative_path }}</a></td>
             <td class="hidden-xs">
               <a title="{{ project.last_build.message }}" href="https://github.com/{{ project.username }}/{{ project.repository }}/commit/{{ project.last_build.commit}}">{{ project.last_build.message | truncatechars:80 }}</a>
+            </td>
+            <td align="center">
+              {% if project.cargo_support %}
+                <span class="glyphicon glyphicon-ok"></span>
+              {% endif %}
             </td>
             <td class="status-col">
               {% if not project.auth_token %}
@@ -93,9 +98,6 @@
                   <img src="/static/gfx/error.png" alt="errored"/>
                 </a>
               {% endif %}
-            </td>
-            <td>
-              <a href="{{ project.get_absolute_url }}">details</a>
             </td>
           </tr>
         {% endfor %}

@@ -82,6 +82,8 @@ class Project(models.Model):
     # Retrieved from Travis (which gets it from GitHub) 
     description = models.TextField(null=False, blank=True)
 
+    cargo_support = models.BooleanField(default=False)
+
     # AWS
     s3_creds_created_at = models.DateTimeField(null=True, blank=True)
     s3_user_name = models.CharField(max_length=100, null=True, blank=True)
