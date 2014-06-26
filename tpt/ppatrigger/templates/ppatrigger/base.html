@@ -59,6 +59,8 @@
           var docsOnly = docsCheckbox.is(':checked');
           var passingCheckbox = $('#project-filter-passingonly');
           var passingOnly = passingCheckbox.is(':checked');
+          var cargoCheckbox = $('#project-filter-cargoonly');
+          var cargoOnly = cargoCheckbox.is(':checked');
 
           $('#project-filter-form').on('submit', function(e) {
             e.preventDefault();
@@ -80,6 +82,14 @@
             }
             filter();
           });
+          cargoCheckbox.on('change', function(e) {
+            cargoOnly = false;
+            if($(this).is(':checked')) {
+              cargoOnly = true;              
+            }
+            filter();
+          });
+
 
           // initial filter
           if(input.length > 0) { 
@@ -104,6 +114,11 @@
               }
               if(passingOnly) {
                 if(!projEl.data('ispassing')) {
+                  projEl.hide();
+                }
+              }
+              if(cargoOnly) {
+                if(!projEl.data('cargo-supported')) {
                   projEl.hide();
                 }
               }
