@@ -38,6 +38,10 @@
                   {% endfor %})
                 {% endif %}
 
+                {% if project.cargo_support %}
+                  <img src="/static/gfx/cargo-32x32.png" title="Cargo supported" alt="Cargo supported"/>
+                {% endif %}
+
                 {% if not project.last_triggered %}
                   <img src="/static/gfx/unknown.png" alt="unknown build"/>
                 {% elif project.last_build.status == 0 %}
