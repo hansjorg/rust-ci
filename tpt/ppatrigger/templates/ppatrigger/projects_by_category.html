@@ -30,7 +30,7 @@
           <ul>
             {% for project in cat.project_set_sorted.all %}
               {% if not project.deleted %}
-              <li data-cargo-supported="{% if project.cargo_supported %}true{% else %}false{% endif %}" data-ispassing="{% if project.last_build.status == 0 %}true{% else %}false{% endif %}" data-hasdocs="{% if project.get_latest_docs %}true{% else %}false{% endif %}" data-filter-text="{{ cat.name|lower }} {{ project.repository|lower }} {{ project.description|lower }} {{ project.username|lower }}">
+              <li data-cargo-supported="{% if project.cargo_support %}true{% else %}false{% endif %}" data-ispassing="{% if project.last_build.status == 0 %}true{% else %}false{% endif %}" data-hasdocs="{% if project.get_latest_docs %}true{% else %}false{% endif %}" data-filter-text="{{ cat.name|lower }} {{ project.repository|lower }} {{ project.description|lower }} {{ project.username|lower }}">
                 <a href="{{ project.get_absolute_url }}">{{ project.username }}/{{ project.repository }}</a> {{ project.description }}
                 {% if project.get_latest_docs %}(<span class="glyphicon glyphicon-book" title="documentation"></span>
                   {% for docpath in project.get_latest_docs.get_docpaths %}
@@ -74,7 +74,7 @@
             {% endfor %})
           {% endif %}
 
-          {% if project.cargo_supported %}
+          {% if project.cargo_support %}
             <img src="/static/gfx/cargo-32x32.png" title="Cargo supported" alt="Cargo supported"/>
           {% endif %}
 
