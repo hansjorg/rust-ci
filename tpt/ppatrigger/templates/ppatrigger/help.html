@@ -8,17 +8,18 @@
 
       <div class="panel panel-info">
         <div class="panel-heading">
-          Add a .travis.yml file to your project.
+          Add a .travis.yml file to your project. An example using cargo to build follows, with cargo installed from Corey Richardson's <a href="https://launchpad.net/~cmrx64/+archive/cargo">PPA</a>. Using cargo for building is not required.
         </div>
         <div class="panel-body">
 <pre>
 before_install:
   - yes | sudo add-apt-repository ppa:hansjorg/rust
+  - yes | sudo add-apt-repository ppa:cmrx64/cargo
   - sudo apt-get update
 install:
-  - sudo apt-get install rust-nightly
+  - sudo apt-get install rust-nightly cargo
 script:
-  - cargo build # for example, using cargo not required
+  - cargo build
 </pre>
         </div>
       </div>
