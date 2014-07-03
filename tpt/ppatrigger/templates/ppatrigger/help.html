@@ -8,9 +8,12 @@
 
       <div class="panel panel-info">
         <div class="panel-heading">
-          Add a .travis.yml file to your project. An example using cargo to build follows, with cargo installed from Corey Richardson's <a href="https://launchpad.net/~cmrx64/+archive/cargo">PPA</a>. Using cargo for building is not required.
+          Add a .travis.yml file to your project.
         </div>
         <div class="panel-body">
+          <p>
+            Here's an example using the Rust package manager <a href="http://crates.io/">cargo</a> for building. It installs cargo from Corey Richardson's <a href="https://launchpad.net/~cmrx64/+archive/cargo">PPA</a>. Using cargo for building is not required.
+          </p>
 <pre>
 before_install:
   - yes | sudo add-apt-repository ppa:hansjorg/rust
