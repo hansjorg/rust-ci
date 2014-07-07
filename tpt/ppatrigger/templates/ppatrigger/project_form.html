@@ -64,6 +64,15 @@
           placeholder="branch" value="{{form.branch.value|default_if_none:""}}">
       </div>
 
+      <div class="form-group">
+        <label class="control-label">
+            <input type="checkbox" name="cargo_support"
+                {% if form.cargo_support.value %}checked="checked"{% endif %}>
+            Cargo support
+        </label>
+        <span>(check this if your project uses <a href="http://crates.io/">Cargo</a>)</span>
+      </div>
+
       <div class="form-group {% if form.categories.errors %}has-error{% endif %}">
         <label class="control-label" for="categories">Project categories</label>
         {{ form.categories }}

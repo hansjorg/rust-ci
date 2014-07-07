@@ -11,6 +11,7 @@ class ProjectFormEdit(forms.Form):
     username = forms.CharField(max_length=100)
     repository = forms.CharField(max_length=100)
     branch = forms.CharField(max_length=100)
+    cargo_support = forms.BooleanField()
     
     widget = forms.SelectMultiple(attrs =
             {'class': 'form-control chosen-select',

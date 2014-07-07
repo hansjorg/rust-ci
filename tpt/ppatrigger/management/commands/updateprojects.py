@@ -33,6 +33,8 @@ class Command(BaseCommand):
             #    self.stdout.write('No description found: ' + str(project))
 
 
+            # Check for Cargo.toml in root of project
+
             headers = {
                 'User-Agent': 'Rust CI'
             }
@@ -41,8 +43,6 @@ class Command(BaseCommand):
                     % (project.username, project.repository, private_settings.GITHUB_CLIENT_ID,
                             private_settings.GITHUB_CLIENT_SECRET)
             req = urllib2.Request(url, headers = headers)
-            #req.add_header('Accept', 'application/json')
-            #response = json.loads(urllib2.urlopen(req).read())
 
             try:
                 response = urllib2.urlopen(req)
@@ -55,10 +55,10 @@ class Command(BaseCommand):
                 project.cargo_support = True
                 self.stdout.write('Found Cargo.toml: ' + str(project))
             except URLError, e:                
-                self.stdout.write('No Cargo.toml: ' + str(project) + str(e.code))
-                if e.code == 404:
-                    project.cargo_support = False
-                pass
+                self.stdout.write('No Cargo.toml found: ' +\
+                        str(project) + ' ' + str(e.code))
+                #if e.code == 404:
+                #    project.cargo_support = False
             
             project.save()
 

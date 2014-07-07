@@ -221,6 +221,7 @@ def action_edit_project(request, project_id):
         if form.is_valid():
             project.package = form.cleaned_data['package']
             project.branch = form.cleaned_data['branch']
+            project.cargo_support = form.cleaned_data['cargo_support']
             project.categories = form.cleaned_data['categories']
             project.save()           
             
@@ -274,6 +275,7 @@ def add_project(request):
             username = form.cleaned_data['username']
             repository = form.cleaned_data['repository']
             branch = form.cleaned_data['branch']
+            cargo_support = form.cleaned_data['cargo_support']
             categories = form.cleaned_data['categories']
 
             repo = travisclient.get_repo(username, repository)
@@ -284,7 +286,8 @@ def add_project(request):
                 return index(request, error_message)
 
             project = Project(package = package, username = username,
-                    repository = repository, branch = branch)
+                    repository = repository, branch = branch,
+                    cargo_support = cargo_support)
            
             if('description' in repo and repo['description']):
                 project.description = repo['description']
