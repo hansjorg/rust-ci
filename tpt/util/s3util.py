@@ -23,7 +23,10 @@ def stream_object(key_name):
         raise Http404()
 
     response = StreamingHttpResponse(key)
-   
+
+    if key.etag:
+        response['Etag'] = key.etag
+
     if key.content_type:
         response['Content-Type'] =  key.content_type
     else:
