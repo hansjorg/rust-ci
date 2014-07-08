@@ -234,6 +234,7 @@ def action_edit_project(request, project_id):
             'username': project.username,
             'repository': project.repository,
             'branch': project.branch,
+            'cargo_support': project.cargo_support,
             'categories': project.categories.all()})
 
     context = {
