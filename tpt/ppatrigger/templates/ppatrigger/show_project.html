@@ -93,6 +93,14 @@ after_script:
           </td>
         </tr>
         <tr>
+          <th>Cargo support</th>
+          <td>
+            {% if project.cargo_support %}
+              <span class="glyphicon glyphicon-ok"></span>
+            {% endif %}
+          </td>
+        </tr>
+        <tr>
           <th>Documentation</th>
           <td>{{project.get_latests_docs }}
             {% for docpath in project.get_latest_docs.get_docpaths %}

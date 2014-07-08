@@ -5,15 +5,15 @@
 {% block title %}{%if editing %}Edit{% else %}Add{% endif %} project - {{ title }}{% endblock %}
 
 {% block content %}
-  <div class="panel panel-info">
     {% if not editing %}
-      <div class="panel-heading">Add new project</div>
-      <div class="panel-body">
-        Add an existing Travis CI project to trigger builds whenever the PPA package
-        is updated. You will be redirected to GitHub for authentication. <a href="{% url 'help' %}">More information.</a>
+      <div class="panel panel-info">
+        <div class="panel-heading">Add new project</div>
+        <div class="panel-body">
+          Add an existing Travis CI project to trigger builds whenever the PPA package
+          is updated. You will be redirected to GitHub for authentication. <a href="{% url 'help' %}">More information.</a>
+        </div>
       </div>
     {% endif %}
-  </div>
 
   <div class="panel panel-default">
     {%if editing %}
