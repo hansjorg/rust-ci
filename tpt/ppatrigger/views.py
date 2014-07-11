@@ -133,8 +133,11 @@ def show_docs(request, username, repository, docpath, relative_path = None,
     except Project.DoesNotExist:
         raise Http404
 
-    project_docs = ProjectDocs.objects.filter(project = project).\
-            latest('created_at')
+    try:
+        project_docs = ProjectDocs.objects.filter(project = project).\
+                latest('created_at')
+    except ProjectDocs.DoesNotExist:
+        raise Http404
 
     if docpath.endswith('/'):
         docpath = docpath[:-1]
