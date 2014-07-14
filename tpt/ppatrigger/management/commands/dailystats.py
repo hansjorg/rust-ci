@@ -40,9 +40,10 @@ class Command(BaseCommand):
             now = datetime.utcnow().replace(tzinfo = pytz.utc)
             day = latest
 
-            while day <= now: 
+            next_day = day + timedelta(days=1)
+
+            while next_day <= now: 
                 self.stdout.write(str(day) + ' <= ' + str(now))
-                next_day = day + timedelta(days=1)
 
                 try:
                     previous_build = Build.objects.filter(fetched_at__lt = day).latest('fetched_at')
