@@ -40,6 +40,8 @@ def create_user(user_name):
 
 def delete_user(user_name, access_key_id):
 
+    deleted = False
+
     iam = boto.connect_iam(
             aws_access_key_id = private_settings.AWS_ACCESS_KEY_ID,
             aws_secret_access_key = private_settings.AWS_SECRET_ACCESS_KEY)
@@ -52,12 +54,15 @@ def delete_user(user_name, access_key_id):
         for group in groups['list_groups_for_user_response']['list_groups_for_user_result']['groups']:
             iam.remove_user_from_group(group_name = group['group_name'], user_name = user_name)
 
-        response = iam.delete_user(user_name = user_name)
+        iam.delete_user(user_name = user_name)
 
         logger.info('Deleted iam user "{}"'.format(user_name))
+
+        deleted = True
 
     except BotoServerError, e:
         logger.error('Unable to delete iam user "{}": {}, {}'.format(user_name,
             e.status, e.reason))
-        #raise Exception('iam delete error') 
+
+    return deleted
 

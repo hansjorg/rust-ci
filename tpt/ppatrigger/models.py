@@ -100,12 +100,13 @@ class Project(models.Model):
 
     def delete_s3_credentials(self):
         if self.s3_user_name and self.s3_access_key_id:
-            user = iamutil.delete_user(self.s3_user_name,
+            deleted = iamutil.delete_user(self.s3_user_name,
                     self.s3_access_key_id)
-        self.s3_creds_created_at = None
-        self.s3_user_name = None
-        self.s3_access_key_id = None
-        self.s3_secret_access_key = None
+            if deleted:
+                self.s3_creds_created_at = None
+                self.s3_user_name = None
+                self.s3_access_key_id = None
+                self.s3_secret_access_key = None
 
     def get_latest_docs(self):
         # Get documentation uploaded for project if any
