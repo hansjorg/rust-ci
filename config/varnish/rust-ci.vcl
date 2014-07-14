@@ -34,21 +34,21 @@ sub vcl_recv {
 
 sub vcl_hash {
 
-	# All the project/doc/.* static files are the same, except for search-index.js
-	# Normalize the hashed req.url so that these files are only fetched once from S3
+  # All the project/doc/.* static files are the same, except for search-index.js
+  # Normalize the hashed req.url so that these files are only fetched once from S3
 
-	if (req.url ~ "doc\/[^.]*\.(woff|css|js)$" && req.url !~ "search-index.js$") {
-		hash_data(regsub(req.url, "(.*)\/doc", "/normalized"));
-	} else {
-		hash_data(req.url);
-	}
+  if (req.url ~ "doc\/[^.]*\.(woff|css|js)$" && req.url !~ "search-index.js$") {
+    hash_data(regsub(req.url, "(.*)\/doc", "/normalized"));
+  } else {
+    hash_data(req.url);
+  }
 
-	if (req.http.host) {
-			hash_data(req.http.host);
-	} else {
-			hash_data(server.ip);
-	}
-	return (hash);
+  if (req.http.host) {
+    hash_data(req.http.host);
+  } else {
+    hash_data(server.ip);
+  }
+  return (hash);
 }
 
 sub vcl_hit {
