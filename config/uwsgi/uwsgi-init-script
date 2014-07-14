@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# /etc/init.d/uwsgi
+
+daemon=/usr/local/bin/uwsgi
+pid=/var/run/uwsgi.pid
+args="--ini /etc/uwsgi/rust-ci.ini"
+
+case "$1" in
+    start)
+        echo "Starting uwsgi"
+        start-stop-daemon -p $pid --start --exec $daemon -- $args
+        ;;
+    stop)
+        echo "Stopping uwsgi"
+        start-stop-daemon --signal INT -p $pid --stop $daemon -- $args
+        ;;
+    reload)
+        echo "Reloading conf"
+        kill -HUP $(cat $pid)
+        ;;
+    *)
+        echo "Usage: /etc/init.d/uwsgi {start|stop|reload}"
+        exit 1
+    ;;
+esac
+
+exit 0
