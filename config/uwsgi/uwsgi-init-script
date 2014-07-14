@@ -2,7 +2,8 @@
 
 # /etc/init.d/uwsgi
 
-daemon=/usr/local/bin/uwsgi
+# Use uwsgi installed by pip
+daemon=/home/travisppatrigger/source/rust-ci/env/bin/uwsgi
 pid=/var/run/uwsgi.pid
 args="--ini /etc/uwsgi/rust-ci.ini"
 
