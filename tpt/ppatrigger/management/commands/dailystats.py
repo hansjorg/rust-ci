@@ -40,9 +40,10 @@ class Command(BaseCommand):
             now = datetime.utcnow().replace(tzinfo = pytz.utc)
             day = latest
 
-            next_day = day + timedelta(days=1)
 
-            while next_day <= now: 
+            while day <= now: 
+                next_day = day + timedelta(days=1)
+
                 self.stdout.write(str(day) + ' <= ' + str(now))
 
                 try:
