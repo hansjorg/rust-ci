@@ -63,7 +63,7 @@ def delete_user(user_name, access_key_id):
     except BotoServerError, e:
         if e.status == 404:
             logger.error('Trying to delete the iam user "{}", but it ' +\
-                    'doesn\'t exist.'.format(user_name)
+                    'doesn\'t exist.'.format(user_name))
             deleted = True
         else:
             logger.error('Unable to delete iam user "{}": {}, {}'.
