@@ -19,10 +19,15 @@ class Command(BaseCommand):
                 now = datetime.utcnow().replace(tzinfo = pytz.utc)
                 diff = now - project.s3_creds_created_at
 
-                if diff.seconds > private_settings.CREDENTIALS_MAX_AGE:
-                    logger.info('Credentials older than max age, deleting: %s',
-                            project)
+                    if diff.seconds > private_settings.CREDENTIALS_MAX_AGE:
+                        if not project.build_started and not project.build_requested:
+                            logger.info('Credentials older than max age, deleting: %s',
+                                    project)
 
-                    project.delete_s3_credentials()
-                    project.save()
+                            project.delete_s3_credentials()
+                            project.save()
+                        else:
+                            logger.info('Credentials older than max age, but build ' +\
+                                    'was requested or started so not deleting: %s', project)
+
 
