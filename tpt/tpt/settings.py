@@ -169,7 +169,7 @@ LOGGING = {
             'class':'logging.handlers.RotatingFileHandler',
             'filename': SITE_ROOT + "/logs/logfile",
             'maxBytes': 500000,
-            'backupCount': 2,
+            'backupCount': 20,
             'formatter': 'verbose',
         },
     },
