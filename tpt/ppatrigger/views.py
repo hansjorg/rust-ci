@@ -326,7 +326,7 @@ def put_artifacts_script(request):
                 deleted = False)
     except Project.DoesNotExist:
         logger.error('Project not found when requesting put_artifacts ' +
-            'script. token={}'.format(token))
+            'script. token={}, url={}'.format(token, request.get_full_path()))
         return HttpResponse('Unauthorized', status=401)
 
     project.create_s3_credentials()
