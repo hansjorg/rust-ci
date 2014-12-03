@@ -82,7 +82,11 @@ sub vcl_fetch {
   }
 
   # Set how long Varnish will keep it
-  set beresp.ttl = 10w;
+  if (beresp.status == 200) {
+    set beresp.ttl = 10w;
+  } else if (beresp.status == 404 || beresp.status == 500 || beresp.status == 503) {
+    set beresp.ttl = 60s;
+  }
 
   # marker for vcl_deliver to reset Age:
   set beresp.http.magicmarker = "1";
